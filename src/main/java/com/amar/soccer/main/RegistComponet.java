@@ -9,6 +9,7 @@ import com.amar.soccer.dinner.BuyForm;
 import com.amar.soccer.dinner.LaunchForm;
 import com.amar.soccer.setting.SettingForm;
 import com.amar.soccer.soccer.LineupForm;
+import com.amar.soccer.test.TestForm;
 import com.amar.soccer.user.ForgetPwForm;
 import com.amar.soccer.user.LoginForm;
 import com.amar.soccer.user.LogoutForm;
@@ -33,7 +34,8 @@ public class RegistComponet
 		registMap.put( Form_LineupForm , new LineupForm() );		
 		registMap.put( Form_BuyForm , new BuyForm() );			
 		registMap.put( Form_LaunchForm , new LaunchForm() );
-		registMap.put( Form_SettingForm , new SettingForm() );	
+		registMap.put( Form_SettingForm , new SettingForm() );
+		registMap.put( Form_TestForm , new TestForm() );	
 	}
 	
 	public static JComponent getComponet(String title)
@@ -51,4 +53,5 @@ public class RegistComponet
 	public static final String Form_BuyForm = "下单";
 	public static final String Form_LaunchForm = "发起团购";
 	public static final String Form_SettingForm = "参数设置";
+	public static final String Form_TestForm = "手机测试";
 }

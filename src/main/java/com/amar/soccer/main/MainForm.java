@@ -63,6 +63,8 @@ public class MainForm extends javax.swing.JFrame
 		jMenu3 = new javax.swing.JMenu();
 		launchMenu = new javax.swing.JMenuItem();
 		buyMenu = new javax.swing.JMenuItem();
+		jMenu5 = new javax.swing.JMenu();
+		jMenuItem1 = new javax.swing.JMenuItem();
 		jMenu4 = new javax.swing.JMenu();
 		settingMenu = new javax.swing.JMenuItem();
 
@@ -170,6 +172,20 @@ public class MainForm extends javax.swing.JFrame
 
 		jMenuBar1.add( jMenu3 );
 
+		jMenu5.setText( "\u6d4b\u8bd5" );
+
+		jMenuItem1.setText( "\u5b89\u5353\u6d4b\u8bd5" );
+		jMenuItem1.addMouseListener( new java.awt.event.MouseAdapter()
+		{
+			public void mouseReleased( java.awt.event.MouseEvent evt )
+			{
+				jMenuItem1MouseReleased( evt );
+			}
+		} );
+		jMenu5.add( jMenuItem1 );
+
+		jMenuBar1.add( jMenu5 );
+
 		jMenu4.setText( "\u8bbe\u7f6e" );
 
 		settingMenu.setText( "\u53c2\u6570\u8bbe\u7f6e" );
@@ -194,6 +210,11 @@ public class MainForm extends javax.swing.JFrame
 		pack();
 	}// </editor-fold>
 	//GEN-END:initComponents
+
+	private void jMenuItem1MouseReleased( java.awt.event.MouseEvent evt )
+	{
+		enableCompone( RegistComponet.Form_TestForm , RegistComponet.getComponet( RegistComponet.Form_TestForm ) );
+	}
 
 	private void settingMenuMouseReleased( java.awt.event.MouseEvent evt )
 	{
@@ -275,7 +296,11 @@ public class MainForm extends javax.swing.JFrame
 
 	private javax.swing.JMenu jMenu4;
 
+	private javax.swing.JMenu jMenu5;
+
 	private javax.swing.JMenuBar jMenuBar1;
+
+	private javax.swing.JMenuItem jMenuItem1;
 
 	private javax.swing.JMenuItem launchMenu;
 
