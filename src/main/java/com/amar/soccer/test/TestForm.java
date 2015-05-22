@@ -138,7 +138,6 @@ public class TestForm extends javax.swing.JPanel
 
 	Thread recordThread;
 
-	MonitorMobile monitorMobile;
 
 	private void testButtonMouseReleased( java.awt.event.MouseEvent evt )
 	{
@@ -146,7 +145,7 @@ public class TestForm extends javax.swing.JPanel
 		{
 			try
 			{
-				monitorMobile.stop();
+				//monitorMobile.stop();
 			}
 			catch ( Exception e )
 			{
@@ -168,20 +167,20 @@ public class TestForm extends javax.swing.JPanel
 			testButton.setText( "停止录制" );
 			isRecord = true;
 
-			monitorMobile = new MonitorMobile();
-			monitorMobile.setDevice( device );
-
-			monitorMobile.setCallBack( new MonitorMobile.CallBack()
-			{
-				@Override
-				public void event( int type , int x , int y )
-				{
-					infoTextArea.setText( infoTextArea.getText() + "\n" + "touch:" + x + "," + y );
-				}
-			} );
-
-			recordThread = new Thread( monitorMobile );
-			recordThread.start();
+//			monitorMobile = new MonitorMobile();
+//			monitorMobile.setDevice( device );
+//
+//			monitorMobile.setCallBack( new MonitorMobile.CallBack()
+//			{
+//				@Override
+//				public void event( int type , int x , int y )
+//				{
+//					infoTextArea.setText( infoTextArea.getText() + "\n" + "touch:" + x + "," + y );
+//				}
+//			} );
+//
+//			recordThread = new Thread( monitorMobile );
+//			recordThread.start();
 
 		}
 
