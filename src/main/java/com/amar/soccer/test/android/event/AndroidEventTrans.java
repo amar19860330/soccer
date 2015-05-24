@@ -86,9 +86,8 @@ public class AndroidEventTrans
 	{
 		// java to xml
 		AndroidEventTrans AndroidEvents = new AndroidEventTrans();
-		// AndroidEvents.testListToXml();
+		//AndroidEvents.testListToXml();
 		AndroidEvents.testXmlToList();
-
 	}
 	
 	// only test for myself
@@ -128,7 +127,11 @@ public class AndroidEventTrans
 		TransActivityEvent transActivityEvent_2 = new TransActivityEvent( "C.java" , "d.java" );
 		SleepEvent sleepEvent_1 = new SleepEvent( 200 );
 		SleepEvent sleepEvent_2 = new SleepEvent( 300 );
-
+		DragEvent dragEvent_1 = new DragEvent(12,33);
+		DragEvent dragEvent_2 = new DragEvent(555,367);
+		DeleteEvent deleteEvent_1 = new DeleteEvent();
+		DeleteEvent deleteEvent_2 = new DeleteEvent();
+		
 		AndroidEventTrans androidEvents = new AndroidEventTrans();
 		androidEvents.getAndroidEventList().add( clickEvent_1 );
 		androidEvents.getAndroidEventList().add( clickEvent_2 );
@@ -138,7 +141,11 @@ public class AndroidEventTrans
 		androidEvents.getAndroidEventList().add( transActivityEvent_2 );
 		androidEvents.getAndroidEventList().add( sleepEvent_1 );
 		androidEvents.getAndroidEventList().add( sleepEvent_2 );
-
+		androidEvents.getAndroidEventList().add( dragEvent_1 );
+		androidEvents.getAndroidEventList().add( dragEvent_2 );
+		androidEvents.getAndroidEventList().add( deleteEvent_1 );
+		androidEvents.getAndroidEventList().add( deleteEvent_2 );
+		
 		try
 		{
 			JAXBContext jaxbContext = JAXBContext.newInstance( AndroidEventTrans.class );

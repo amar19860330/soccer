@@ -55,7 +55,7 @@ public class AndroidMonitor extends AndroidCommand implements CallBack<String>, 
 	/**
 	 * 可能会频繁发送读取当前 activity 状态，所以用个线程池
 	 */
-	ExecutorService singleThreadExecutor;
+	ExecutorService threadExecutor;
 
 	private String device;
 
@@ -102,7 +102,7 @@ public class AndroidMonitor extends AndroidCommand implements CallBack<String>, 
 
 	public static void main(String args[])
 	{
-		AndroidMonitor androidMonitor = new AndroidMonitor( "192.168.112.101:5555",null );
+		AndroidMonitor androidMonitor = new AndroidMonitor( "192.168.56.101:5555",null );
 		androidMonitor.run();
 	}
 	
@@ -119,13 +119,13 @@ public class AndroidMonitor extends AndroidCommand implements CallBack<String>, 
 		if ( ! currentActivityName.equals( info ) )
 		{
 			sendEvent( new TransActivityEvent( currentActivityName , info ) );
+			currentActivityName = info;
 		}
-		currentActivityName = info;
 	}
 
 	private void readCurrentActivityName()
 	{
-		singleThreadExecutor.execute( new GetAndroidInfoImmediately( device , this ) );
+		threadExecutor.execute( new GetAndroidInfoImmediately( device , this ) );
 	}
 
 	@Override
@@ -154,10 +154,10 @@ public class AndroidMonitor extends AndroidCommand implements CallBack<String>, 
 				bufferedReader = null;
 			}
 			
-			if(singleThreadExecutor!=null)
+			if(threadExecutor!=null)
 			{
-				singleThreadExecutor.shutdownNow();
-				singleThreadExecutor = null;
+				threadExecutor.shutdownNow();
+				threadExecutor = null;
 			}
 		}
 		catch ( IOException e )
@@ -172,6 +172,7 @@ public class AndroidMonitor extends AndroidCommand implements CallBack<String>, 
 	{
 		try
 		{
+			readCurrentActivityName();// 读取当前 activity name
 			originShell( getCommandToDevice( device , CMD_ALL_EVENT ) );
 			bufferedReader = new BufferedReader( new InputStreamReader( getInput() ) );
 
@@ -188,8 +189,6 @@ public class AndroidMonitor extends AndroidCommand implements CallBack<String>, 
 					{
 						line = line.trim();
 					}
-
-					//readCurrentActivityName();// 读取当前 activity name
 
 					/************ 判断点击开始 ********/
 					if ( isClickDown( line ) )
@@ -316,7 +315,8 @@ public class AndroidMonitor extends AndroidCommand implements CallBack<String>, 
 
 	protected void init()
 	{
-		singleThreadExecutor = Executors.newSingleThreadExecutor();
+		//threadExecutor = Executors.newSingleThreadExecutor();
+		threadExecutor = Executors.newCachedThreadPool();
 		shiftMap = new HashMap<String,String>();
 		shiftMap.put( "`" , "~" );
 		shiftMap.put( "1" , "!" );
@@ -412,7 +412,7 @@ public class AndroidMonitor extends AndroidCommand implements CallBack<String>, 
 		return matcher.matches();
 	}
 
-	void sendEvent( AndroidEvent event )
+	synchronized void sendEvent( AndroidEvent event )
 	{
 		System.out.println( event.toString() );
 
@@ -427,7 +427,7 @@ public class AndroidMonitor extends AndroidCommand implements CallBack<String>, 
 		}
 		else
 		{
-			//readCurrentActivityName();
+			readCurrentActivityName();
 		}
 	}
 

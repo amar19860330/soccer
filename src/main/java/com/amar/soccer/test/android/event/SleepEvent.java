@@ -2,13 +2,15 @@ package com.amar.soccer.test.android.event;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 
 @XmlRootElement(name = "SleepEvent")
-@XmlAccessorType (XmlAccessType.FIELD)
+@XmlAccessorType (XmlAccessType.NONE)
 public class SleepEvent extends AndroidEvent
 {
 	private static final long serialVersionUID = - 7765948320020014486L;
+	@XmlAttribute
 	private long sleep;
 	
 	public SleepEvent()

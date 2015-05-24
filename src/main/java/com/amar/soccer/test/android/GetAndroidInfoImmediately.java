@@ -1,10 +1,15 @@
 package com.amar.soccer.test.android;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 public class GetAndroidInfoImmediately extends AndroidCommand implements Runnable
 {
 	private String device;
 
 	public static final String CMD_QUERY_CURRENT_ACTIVITY = "dumpsys input | grep FocusedApplication";
+
+	public static final String RULER_OF_CURRENT_ACTIVITY_NAME = "^(.*ActivityRecord\\{[0-9|A-Z|a-z]*\\s)(.*)(\\}{3}.*\\n*)$";
 
 	CallBack<String> callBack;
 
@@ -12,6 +17,40 @@ public class GetAndroidInfoImmediately extends AndroidCommand implements Runnabl
 	{
 		this.device = device;
 		this.callBack = callBack;
+	}
+
+	public static void main( String args[] )
+	{
+		GetAndroidInfoImmediately getAndroidInfoImmediately = new GetAndroidInfoImmediately( "192.168.56.101:5555" , null );
+		getAndroidInfoImmediately.getCurrentActivityName();
+
+	}
+
+	/**
+	 * "  FocusedApplication: name='AppWindowToken{53914d90 token=Token{538a43bc ActivityRecord{538b0314 com.amar.hello2/.A3}}}', dispatchingTimeout=5000.000ms\n\n";
+	 * 
+	 * @param device
+	 * @return
+	 */
+	public String getCurrentActivityName()
+	{
+		String activityInfo = "未查询到";
+		try
+		{
+			String preCommand = String.format( CMD_CONNECT , device );
+			String result = cmd( preCommand + CMD_QUERY_CURRENT_ACTIVITY );
+
+			Matcher matcher = Pattern.compile( RULER_OF_CURRENT_ACTIVITY_NAME ).matcher( result );
+			if ( matcher.matches() && matcher.groupCount() == 3 )
+			{
+				activityInfo = matcher.group( 2 );
+			}
+		}
+		catch ( Exception e )
+		{
+			e.printStackTrace();
+		}
+		return activityInfo;
 	}
 
 	/**
@@ -50,10 +89,12 @@ public class GetAndroidInfoImmediately extends AndroidCommand implements Runnabl
 	@Override
 	public void run()
 	{
-		String currentActivity = getCurrentActivity( device );
-
+		String currentActivity = getCurrentActivityName();
+		
 		if ( callBack != null )
+		{
 			callBack.callback( currentActivity );
+		}
 	}
 
 }

@@ -20,7 +20,7 @@ public class TestRecordReceiver implements CallBack<AndroidEvent>
 
 	public void saveRecord()
 	{
-
+		androidEventTrans.listToXml( DEFAULT_FILE_NAME );
 	}
 
 	private CallBack<AndroidEvent> uiCallBack;
@@ -34,20 +34,20 @@ public class TestRecordReceiver implements CallBack<AndroidEvent>
 	public void callback( AndroidEvent event )
 	{
 		System.out.println( "receiver:" + event.toString() );
-//		if ( androidEventTrans == null )
-//		{
-//			androidEventTrans = new AndroidEventTrans();
-//		}
-//
-//		if ( event != null )
-//		{
-//			androidEventTrans.getAndroidEventList().add( event );
-//		}
-//
-//		if ( uiCallBack != null )
-//		{
-//			uiCallBack.callback( event );
-//		}
+		if ( androidEventTrans == null )
+		{
+			androidEventTrans = new AndroidEventTrans();
+		}
+
+		if ( event != null )
+		{
+			androidEventTrans.getAndroidEventList().add( event );
+		}
+
+		if ( uiCallBack != null )
+		{
+			uiCallBack.callback( event );
+		}
 	}
 
 	String device;

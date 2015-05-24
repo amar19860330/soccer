@@ -183,7 +183,10 @@ public class TestForm extends javax.swing.JPanel
 
 	private void saveTestScriptButtonMouseReleased( java.awt.event.MouseEvent evt )
 	{
-		// TODO add your handling code here:
+		testRecordReceiver.saveRecord();
+		testRecordReceiver.stop();
+		testRecordReceiver = null;
+		
 	}
 
 	private void findButtonActionPerformed( java.awt.event.ActionEvent evt )

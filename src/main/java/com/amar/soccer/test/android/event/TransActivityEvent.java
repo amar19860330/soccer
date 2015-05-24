@@ -2,16 +2,17 @@ package com.amar.soccer.test.android.event;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 
 @XmlRootElement(name = "TransActivityEvent")
-@XmlAccessorType (XmlAccessType.FIELD)
+@XmlAccessorType (XmlAccessType.NONE)
 public class TransActivityEvent extends AndroidEvent
 {
 	private static final long serialVersionUID = - 2567250874557673524L;
-
+	@XmlAttribute
 	private String formActivity;
-
+	@XmlAttribute
 	private String toActivity;
 
 	public TransActivityEvent()

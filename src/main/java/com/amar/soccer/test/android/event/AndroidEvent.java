@@ -2,7 +2,7 @@ package com.amar.soccer.test.android.event;
 
 import java.io.Serializable;
 
-import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlAttribute;
 
 public class AndroidEvent implements Serializable
 {
@@ -13,7 +13,7 @@ public class AndroidEvent implements Serializable
 		CLICK, DRAG, DELETE, INPUT, TRANS_ACTIVITY,SLEEP
 	}
 
-	@XmlElement
+	@XmlAttribute
 	protected EventType eventType;
 	
 	public EventType getEventType()
