@@ -1,11 +1,24 @@
 package com.amar.soccer.test.android.event;
 
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlRootElement;
+
+@XmlRootElement(name = "DragEvent")
+@XmlAccessorType (XmlAccessType.FIELD)
 public class DragEvent extends AndroidEvent
 {
-	int x;
+	private static final long serialVersionUID = - 8691343978645366569L;
 
-	int y;
+	private int x;
 
+	private int y;
+
+	public DragEvent()
+	{
+		this.eventType = EventType.DRAG;
+	}
+	
 	public DragEvent( int x , int y )
 	{
 		this.eventType = EventType.DRAG;
@@ -15,7 +28,7 @@ public class DragEvent extends AndroidEvent
 
 	public int [] getPosition()
 	{
-		return new int [] { x, y};
+		return new int [] { x, y };
 	}
 
 	public int getX()
@@ -41,8 +54,7 @@ public class DragEvent extends AndroidEvent
 	@Override
 	public String toString()
 	{
-		return "DragEvent [x=" + x + ", y=" + y + "]";
+		return "拖拽到：" + x + "," + y + "";
 	}
-	
-	
+
 }

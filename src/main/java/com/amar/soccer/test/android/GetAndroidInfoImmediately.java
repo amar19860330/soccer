@@ -23,18 +23,27 @@ public class GetAndroidInfoImmediately extends AndroidCommand implements Runnabl
 	 */
 	public String getCurrentActivity( String device )
 	{
-		String preCommand = String.format( CMD_CONNECT , device );
-		String result = cmd( preCommand + CMD_QUERY_CURRENT_ACTIVITY );
-		String startflag = "ActivityRecord";
-		String endFlag = "}}}";
+		String activityInfo = "未查询到";
+		try
+		{
 
-		int start = result.indexOf( startflag );
-		int end = result.indexOf( endFlag );
+			String preCommand = String.format( CMD_CONNECT , device );
+			String result = cmd( preCommand + CMD_QUERY_CURRENT_ACTIVITY );
+			String startflag = "ActivityRecord";
+			String endFlag = "}}}";
 
-		String first = result.substring( start + startflag.length() , end - 5 );
-		int secondFirst = first.lastIndexOf( " " );
+			int start = result.indexOf( startflag );
+			int end = result.indexOf( endFlag );
 
-		String activityInfo = first.substring( secondFirst + 1 , first.length() );
+			String first = result.substring( start + startflag.length() , end - 5 );
+			int secondFirst = first.lastIndexOf( " " );
+
+			activityInfo = first.substring( secondFirst + 1 , first.length() );
+		}
+		catch ( Exception e )
+		{
+			e.printStackTrace();
+		}
 		return activityInfo;
 	}
 

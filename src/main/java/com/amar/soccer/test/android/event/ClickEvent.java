@@ -1,10 +1,23 @@
 package com.amar.soccer.test.android.event;
 
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlRootElement;
+
+
+@XmlRootElement(name = "AndroidEvent")
+@XmlAccessorType (XmlAccessType.FIELD)
 public class ClickEvent extends AndroidEvent
 {
-	int x;
-	int y;
+	private static final long serialVersionUID = - 2509287324925453211L;
+	private int x;
+	
+	private int y;
 
+	public ClickEvent()
+	{
+		this.eventType = EventType.CLICK;
+	}
 	public ClickEvent( int x , int y )
 	{
 		this.eventType = EventType.CLICK;
@@ -40,8 +53,7 @@ public class ClickEvent extends AndroidEvent
 	@Override
 	public String toString()
 	{
-		return "ClickEvent [x=" + x + ", y=" + y + "]";
+		return "点击了：" + x + "," + y + "";
 	}
-	
-	
+
 }

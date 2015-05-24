@@ -1,31 +1,53 @@
 package com.amar.soccer.test.android;
 
 import com.amar.soccer.test.android.event.AndroidEvent;
+import com.amar.soccer.test.android.event.AndroidEventTrans;
 
 public class TestRecordReceiver implements CallBack<AndroidEvent>
 {
 
 	public static void main( String [] args )
 	{
-		TestRecordReceiver testRecordReceiver = new TestRecordReceiver("192.168.112.102:5555");
+		TestRecordReceiver testRecordReceiver = new TestRecordReceiver( "192.168.112.101:5555" );
 		testRecordReceiver.start();
-		
-		try
-		{
-			Thread.sleep( 10000 );
-			testRecordReceiver.stop();
-		}
-		catch ( InterruptedException e )
-		{
-			e.printStackTrace();
-		}
-		
+	}
+
+	public static String DEFAULT_FILE_PATH = "test/";
+
+	public static String DEFAULT_FILE_NAME = DEFAULT_FILE_PATH + "TestRecord.xml";
+
+	AndroidEventTrans androidEventTrans;
+
+	public void saveRecord()
+	{
+
+	}
+
+	private CallBack<AndroidEvent> uiCallBack;
+
+	public void setUiCallBack( CallBack<AndroidEvent> uiCallBack )
+	{
+		this.uiCallBack = uiCallBack;
 	}
 
 	@Override
-	public void callback( AndroidEvent t )
+	public void callback( AndroidEvent event )
 	{
-		System.out.println(t.toString());
+		System.out.println( "receiver:" + event.toString() );
+//		if ( androidEventTrans == null )
+//		{
+//			androidEventTrans = new AndroidEventTrans();
+//		}
+//
+//		if ( event != null )
+//		{
+//			androidEventTrans.getAndroidEventList().add( event );
+//		}
+//
+//		if ( uiCallBack != null )
+//		{
+//			uiCallBack.callback( event );
+//		}
 	}
 
 	String device;
@@ -40,9 +62,12 @@ public class TestRecordReceiver implements CallBack<AndroidEvent>
 
 	Thread monitorThread;
 
+	public boolean isRunning = false;
+
 	public void start()
 	{
 		stop();
+		isRunning = true;
 		androidMonitor = new AndroidMonitor( device , this );
 		monitorThread = new Thread( androidMonitor );
 		monitorThread.start();
@@ -50,6 +75,7 @@ public class TestRecordReceiver implements CallBack<AndroidEvent>
 
 	public void stop()
 	{
+		isRunning = false;
 		if ( androidMonitor != null )
 		{
 			androidMonitor.removeListener();

@@ -100,6 +100,12 @@ public class AndroidMonitor extends AndroidCommand implements CallBack<String>, 
 
 	CallBack<AndroidEvent> callbackEvent;
 
+	public static void main(String args[])
+	{
+		AndroidMonitor androidMonitor = new AndroidMonitor( "192.168.112.101:5555",null );
+		androidMonitor.run();
+	}
+	
 	public AndroidMonitor( String device , CallBack<AndroidEvent> callbackEvent )
 	{
 		init();
@@ -183,7 +189,7 @@ public class AndroidMonitor extends AndroidCommand implements CallBack<String>, 
 						line = line.trim();
 					}
 
-					readCurrentActivityName();// 读取当前 activity name
+					//readCurrentActivityName();// 读取当前 activity name
 
 					/************ 判断点击开始 ********/
 					if ( isClickDown( line ) )
@@ -408,7 +414,7 @@ public class AndroidMonitor extends AndroidCommand implements CallBack<String>, 
 
 	void sendEvent( AndroidEvent event )
 	{
-		// System.out.println( event.toString() );
+		System.out.println( event.toString() );
 
 		if ( callbackEvent != null )
 		{
@@ -421,7 +427,7 @@ public class AndroidMonitor extends AndroidCommand implements CallBack<String>, 
 		}
 		else
 		{
-			readCurrentActivityName();
+			//readCurrentActivityName();
 		}
 	}
 

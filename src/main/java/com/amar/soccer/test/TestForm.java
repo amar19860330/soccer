@@ -8,6 +8,9 @@ package com.amar.soccer.test;
 import java.util.List;
 
 import com.amar.soccer.test.android.AndroidShell;
+import com.amar.soccer.test.android.CallBack;
+import com.amar.soccer.test.android.TestRecordReceiver;
+import com.amar.soccer.test.android.event.AndroidEvent;
 
 /**
  *
@@ -15,6 +18,8 @@ import com.amar.soccer.test.android.AndroidShell;
  */
 public class TestForm extends javax.swing.JPanel
 {
+
+	private static final long serialVersionUID = - 6123222293657823872L;
 
 	/** Creates new form TestForm */
 	public TestForm()
@@ -38,19 +43,22 @@ public class TestForm extends javax.swing.JPanel
 	private void initComponents()
 	{
 
-		testButton = new javax.swing.JButton();
+		recordButton = new javax.swing.JButton();
 		jScrollPane1 = new javax.swing.JScrollPane();
 		infoTextArea = new javax.swing.JTextArea();
 		startButton = new javax.swing.JButton();
 		deviceComboBox = new javax.swing.JComboBox();
 		findButton = new javax.swing.JButton();
+		useOldTestScriptButton = new javax.swing.JButton();
+		clearInfoButton = new javax.swing.JButton();
+		saveTestScriptButton = new javax.swing.JButton();
 
-		testButton.setText( "\u5f00\u59cb\u5f55\u5236" );
-		testButton.addMouseListener( new java.awt.event.MouseAdapter()
+		recordButton.setText( "\u5f55\u5236\u65b0\u811a\u672c" );
+		recordButton.addMouseListener( new java.awt.event.MouseAdapter()
 		{
 			public void mouseReleased( java.awt.event.MouseEvent evt )
 			{
-				testButtonMouseReleased( evt );
+				recordButtonMouseReleased( evt );
 			}
 		} );
 
@@ -77,36 +85,111 @@ public class TestForm extends javax.swing.JPanel
 				findButtonMouseReleased( evt );
 			}
 		} );
+		findButton.addActionListener( new java.awt.event.ActionListener()
+		{
+			public void actionPerformed( java.awt.event.ActionEvent evt )
+			{
+				findButtonActionPerformed( evt );
+			}
+		} );
+
+		useOldTestScriptButton.setText( "\u4f7f\u7528\u65e7\u7684" );
+		useOldTestScriptButton.addMouseListener( new java.awt.event.MouseAdapter()
+		{
+			public void mouseReleased( java.awt.event.MouseEvent evt )
+			{
+				useOldTestScriptButtonMouseReleased( evt );
+			}
+		} );
+
+		clearInfoButton.setText( "\u6e05\u7a7a" );
+		clearInfoButton.addMouseListener( new java.awt.event.MouseAdapter()
+		{
+			public void mouseReleased( java.awt.event.MouseEvent evt )
+			{
+				clearInfoButtonMouseReleased( evt );
+			}
+		} );
+
+		saveTestScriptButton.setText( "\u4fdd\u5b58\u811a\u672c" );
+		saveTestScriptButton.addMouseListener( new java.awt.event.MouseAdapter()
+		{
+			public void mouseReleased( java.awt.event.MouseEvent evt )
+			{
+				saveTestScriptButtonMouseReleased( evt );
+			}
+		} );
 
 		javax.swing.GroupLayout layout = new javax.swing.GroupLayout( this );
 		this.setLayout( layout );
 		layout.setHorizontalGroup( layout.createParallelGroup( javax.swing.GroupLayout.Alignment.LEADING ).addGroup(
+				javax.swing.GroupLayout.Alignment.TRAILING ,
+				layout.createSequentialGroup()
+						.addGroup(
+								layout.createParallelGroup( javax.swing.GroupLayout.Alignment.TRAILING )
+										.addGroup(
+												layout.createSequentialGroup()
+														.addContainerGap()
+														.addGroup(
+																layout.createParallelGroup( javax.swing.GroupLayout.Alignment.TRAILING )
+																		.addComponent( jScrollPane1 , javax.swing.GroupLayout.Alignment.LEADING , javax.swing.GroupLayout.DEFAULT_SIZE , 389 ,
+																				Short.MAX_VALUE )
+																		.addGroup(
+																				layout.createSequentialGroup()
+																						.addGroup(
+																								layout.createParallelGroup( javax.swing.GroupLayout.Alignment.LEADING , false )
+																										.addComponent( findButton , javax.swing.GroupLayout.DEFAULT_SIZE ,
+																												javax.swing.GroupLayout.DEFAULT_SIZE , Short.MAX_VALUE )
+																										.addComponent( recordButton , javax.swing.GroupLayout.DEFAULT_SIZE ,
+																												javax.swing.GroupLayout.DEFAULT_SIZE , Short.MAX_VALUE ) )
+																						.addGap( 7 , 7 , 7 )
+																						.addGroup(
+																								layout.createParallelGroup( javax.swing.GroupLayout.Alignment.LEADING )
+																										.addGroup(
+																												javax.swing.GroupLayout.Alignment.TRAILING ,
+																												layout.createSequentialGroup()
+																														.addComponent( saveTestScriptButton )
+																														.addPreferredGap( javax.swing.LayoutStyle.ComponentPlacement.RELATED , 34 ,
+																																Short.MAX_VALUE ).addComponent( useOldTestScriptButton )
+																														.addPreferredGap( javax.swing.LayoutStyle.ComponentPlacement.UNRELATED )
+																														.addComponent( startButton ) )
+																										.addComponent( deviceComboBox , 0 , 289 , Short.MAX_VALUE ) ) ) ) )
+										.addComponent( clearInfoButton ) ).addGap( 30 , 30 , 30 ) ) );
+		layout.setVerticalGroup( layout.createParallelGroup( javax.swing.GroupLayout.Alignment.LEADING ).addGroup(
 				layout.createSequentialGroup()
 						.addContainerGap()
 						.addGroup(
-								layout.createParallelGroup( javax.swing.GroupLayout.Alignment.LEADING )
-										.addComponent( testButton )
-										.addGroup(
-												layout.createParallelGroup( javax.swing.GroupLayout.Alignment.TRAILING , false )
-														.addGroup(
-																javax.swing.GroupLayout.Alignment.LEADING ,
-																layout.createSequentialGroup().addComponent( findButton ).addPreferredGap( javax.swing.LayoutStyle.ComponentPlacement.RELATED )
-																		.addComponent( deviceComboBox , 0 , javax.swing.GroupLayout.DEFAULT_SIZE , Short.MAX_VALUE ).addGap( 18 , 18 , 18 )
-																		.addComponent( startButton ) )
-														.addComponent( jScrollPane1 , javax.swing.GroupLayout.Alignment.LEADING , javax.swing.GroupLayout.PREFERRED_SIZE , 358 ,
-																javax.swing.GroupLayout.PREFERRED_SIZE ) ) ).addContainerGap( 30 , Short.MAX_VALUE ) ) );
-		layout.setVerticalGroup( layout.createParallelGroup( javax.swing.GroupLayout.Alignment.LEADING ).addGroup(
-				layout.createSequentialGroup()
-						.addGap( 33 , 33 , 33 )
-						.addComponent( testButton )
-						.addGap( 9 , 9 , 9 )
-						.addGroup(
-								layout.createParallelGroup( javax.swing.GroupLayout.Alignment.BASELINE ).addComponent( findButton ).addComponent( startButton )
-										.addComponent( deviceComboBox , javax.swing.GroupLayout.PREFERRED_SIZE , javax.swing.GroupLayout.DEFAULT_SIZE , javax.swing.GroupLayout.PREFERRED_SIZE ) )
+								layout.createParallelGroup( javax.swing.GroupLayout.Alignment.BASELINE )
+										.addComponent( deviceComboBox , javax.swing.GroupLayout.PREFERRED_SIZE , javax.swing.GroupLayout.DEFAULT_SIZE , javax.swing.GroupLayout.PREFERRED_SIZE )
+										.addComponent( findButton ) )
 						.addPreferredGap( javax.swing.LayoutStyle.ComponentPlacement.RELATED )
-						.addComponent( jScrollPane1 , javax.swing.GroupLayout.PREFERRED_SIZE , 150 , javax.swing.GroupLayout.PREFERRED_SIZE ).addContainerGap( 50 , Short.MAX_VALUE ) ) );
+						.addGroup(
+								layout.createParallelGroup( javax.swing.GroupLayout.Alignment.BASELINE ).addComponent( recordButton ).addComponent( startButton ).addComponent( useOldTestScriptButton )
+										.addComponent( saveTestScriptButton ) ).addPreferredGap( javax.swing.LayoutStyle.ComponentPlacement.RELATED )
+						.addComponent( jScrollPane1 , javax.swing.GroupLayout.DEFAULT_SIZE , 173 , Short.MAX_VALUE ).addPreferredGap( javax.swing.LayoutStyle.ComponentPlacement.RELATED )
+						.addComponent( clearInfoButton ).addContainerGap() ) );
 	}// </editor-fold>
 	//GEN-END:initComponents
+
+	private void useOldTestScriptButtonMouseReleased( java.awt.event.MouseEvent evt )
+	{
+		// TODO add your handling code here:
+	}
+
+	private void clearInfoButtonMouseReleased( java.awt.event.MouseEvent evt )
+	{
+		infoTextArea.setText("");
+	}
+
+	private void saveTestScriptButtonMouseReleased( java.awt.event.MouseEvent evt )
+	{
+		// TODO add your handling code here:
+	}
+
+	private void findButtonActionPerformed( java.awt.event.ActionEvent evt )
+	{
+		// TODO add your handling code here:
+	}
 
 	private void startButtonMouseReleased( java.awt.event.MouseEvent evt )
 	{
@@ -135,59 +218,50 @@ public class TestForm extends javax.swing.JPanel
 	}
 
 	boolean isRecord = false;
+	
+	TestRecordReceiver testRecordReceiver;
 
-	Thread recordThread;
-
-
-	private void testButtonMouseReleased( java.awt.event.MouseEvent evt )
+	private void recordButtonMouseReleased( java.awt.event.MouseEvent evt )
 	{
 		if ( isRecord )
 		{
-			try
-			{
-				//monitorMobile.stop();
-			}
-			catch ( Exception e )
-			{
-				e.printStackTrace();
-			}
-			testButton.setText( "开始录制" );
+			testRecordReceiver.stop();
+			testRecordReceiver = null;
+			recordButton.setText( "开始录制" );
 			isRecord = false;
 		}
 		else
 		{
 			String device = deviceComboBox.getSelectedItem().toString();
-
 			if ( device.equals( chooseDevicePlease ) || device.equals( noDevice ) )
 			{
-				infoTextArea.setText( infoTextArea.getText() + "\n" + chooseDevicePlease );
+				infoTextArea.setText( chooseDevicePlease );
 				return;
 			}
-
-			testButton.setText( "停止录制" );
 			isRecord = true;
+			recordButton.setText( "停止录制" );
 
-//			monitorMobile = new MonitorMobile();
-//			monitorMobile.setDevice( device );
-//
-//			monitorMobile.setCallBack( new MonitorMobile.CallBack()
-//			{
-//				@Override
-//				public void event( int type , int x , int y )
-//				{
-//					infoTextArea.setText( infoTextArea.getText() + "\n" + "touch:" + x + "," + y );
-//				}
-//			} );
-//
-//			recordThread = new Thread( monitorMobile );
-//			recordThread.start();
+			testRecordReceiver = new TestRecordReceiver( device );
 
+			testRecordReceiver.setUiCallBack( new CallBack<AndroidEvent>()
+			{
+
+				@Override
+				public void callback( AndroidEvent t )
+				{
+					infoTextArea.setText( infoTextArea.getText() + "\n" + t.toString() );
+				}
+
+			} );
+
+			testRecordReceiver.start();
 		}
-
 	}
 
 	//GEN-BEGIN:variables
 	// Variables declaration - do not modify
+	private javax.swing.JButton clearInfoButton;
+
 	private javax.swing.JComboBox deviceComboBox;
 
 	private javax.swing.JButton findButton;
@@ -196,9 +270,13 @@ public class TestForm extends javax.swing.JPanel
 
 	private javax.swing.JScrollPane jScrollPane1;
 
+	private javax.swing.JButton recordButton;
+
+	private javax.swing.JButton saveTestScriptButton;
+
 	private javax.swing.JButton startButton;
 
-	private javax.swing.JButton testButton;
+	private javax.swing.JButton useOldTestScriptButton;
 	// End of variables declaration//GEN-END:variables
 
 }

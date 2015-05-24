@@ -1,10 +1,21 @@
 package com.amar.soccer.test.android.event;
 
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlRootElement;
+
+@XmlRootElement(name = "AndroidEvent")
+@XmlAccessorType (XmlAccessType.FIELD)
 public class InputEvent extends AndroidEvent
 {
-	String input;
-	
-	public InputEvent(String input)
+	private static final long serialVersionUID = 3608304206705269091L;
+
+	private String input;
+	public InputEvent()
+	{
+		this.eventType = EventType.INPUT;
+	}
+	public InputEvent( String input )
 	{
 		this.input = input;
 		this.eventType = EventType.INPUT;
@@ -14,17 +25,14 @@ public class InputEvent extends AndroidEvent
 	{
 		return input;
 	}
-
 	public void setInput( String input )
 	{
 		this.input = input;
 	}
 
-	@Override
 	public String toString()
 	{
-		return "InputEvent [input=" + input + "]";
+		return "输入：" + input + "";
 	}
-	
-	
+
 }
