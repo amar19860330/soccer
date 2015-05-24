@@ -2,6 +2,7 @@ package com.amar.soccer.test.android;
 
 import com.amar.soccer.test.android.event.AndroidEvent;
 import com.amar.soccer.test.android.event.AndroidEventTrans;
+import com.amar.soccer.util.PropertiesUtil;
 
 public class TestRecordReceiver implements CallBack<AndroidEvent>
 {
@@ -12,15 +13,15 @@ public class TestRecordReceiver implements CallBack<AndroidEvent>
 		testRecordReceiver.start();
 	}
 
-	public static String DEFAULT_FILE_PATH = "test/";
+	public static String DEFAULT_FILE_PATH = PropertiesUtil.getRootPath() + "test/";
 
 	public static String DEFAULT_FILE_NAME = DEFAULT_FILE_PATH + "TestRecord.xml";
 
 	AndroidEventTrans androidEventTrans;
 
-	public void saveRecord()
+	public void saveRecord( String fileName )
 	{
-		androidEventTrans.listToXml( DEFAULT_FILE_NAME );
+		androidEventTrans.listToXml( fileName );
 	}
 
 	private CallBack<AndroidEvent> uiCallBack;

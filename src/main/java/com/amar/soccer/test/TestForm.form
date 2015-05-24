@@ -14,34 +14,33 @@
   <Layout>
     <DimensionLayout dim="0">
       <Group type="103" groupAlignment="0" attributes="0">
-          <Group type="102" alignment="1" attributes="0">
-              <Group type="103" groupAlignment="1" attributes="0">
-                  <Group type="102" alignment="1" attributes="0">
-                      <EmptySpace max="-2" attributes="0"/>
-                      <Group type="103" groupAlignment="1" attributes="0">
-                          <Component id="jScrollPane1" alignment="0" pref="389" max="32767" attributes="0"/>
-                          <Group type="102" alignment="1" attributes="0">
-                              <Group type="103" groupAlignment="0" max="-2" attributes="0">
-                                  <Component id="findButton" max="32767" attributes="1"/>
-                                  <Component id="recordButton" alignment="0" max="32767" attributes="1"/>
-                              </Group>
-                              <EmptySpace min="-2" pref="7" max="-2" attributes="0"/>
-                              <Group type="103" groupAlignment="0" attributes="0">
-                                  <Group type="102" alignment="1" attributes="0">
-                                      <Component id="saveTestScriptButton" min="-2" max="-2" attributes="0"/>
-                                      <EmptySpace pref="34" max="32767" attributes="0"/>
-                                      <Component id="useOldTestScriptButton" min="-2" max="-2" attributes="0"/>
-                                      <EmptySpace type="unrelated" max="-2" attributes="0"/>
-                                      <Component id="startButton" min="-2" max="-2" attributes="0"/>
-                                  </Group>
-                                  <Component id="deviceComboBox" alignment="0" pref="289" max="32767" attributes="0"/>
-                              </Group>
+          <Group type="102" attributes="0">
+              <EmptySpace max="-2" attributes="0"/>
+              <Group type="103" groupAlignment="0" attributes="0">
+                  <Component id="jScrollPane1" alignment="0" pref="578" max="32767" attributes="0"/>
+                  <Group type="102" alignment="0" attributes="0">
+                      <Group type="103" groupAlignment="0" max="-2" attributes="0">
+                          <Component id="useOldTestScriptButton" max="32767" attributes="1"/>
+                          <Component id="findButton" alignment="0" max="32767" attributes="1"/>
+                      </Group>
+                      <EmptySpace min="-2" pref="7" max="-2" attributes="0"/>
+                      <Group type="103" groupAlignment="0" attributes="0">
+                          <Group type="102" attributes="0">
+                              <Component id="oldScriptTextField" pref="308" max="32767" attributes="0"/>
+                              <EmptySpace type="separate" max="-2" attributes="0"/>
+                              <Component id="openOldScriptButton" min="-2" max="-2" attributes="0"/>
                           </Group>
+                          <Component id="deviceComboBox" pref="383" max="32767" attributes="1"/>
+                      </Group>
+                      <EmptySpace min="-2" pref="14" max="-2" attributes="0"/>
+                      <Group type="103" groupAlignment="1" attributes="0">
+                          <Component id="startButton" pref="93" max="32767" attributes="1"/>
+                          <Component id="recordButton" alignment="0" max="32767" attributes="1"/>
                       </Group>
                   </Group>
                   <Component id="clearInfoButton" alignment="1" min="-2" max="-2" attributes="0"/>
               </Group>
-              <EmptySpace min="-2" pref="30" max="-2" attributes="0"/>
+              <EmptySpace max="-2" attributes="0"/>
           </Group>
       </Group>
     </DimensionLayout>
@@ -50,18 +49,21 @@
           <Group type="102" alignment="0" attributes="0">
               <EmptySpace max="-2" attributes="0"/>
               <Group type="103" groupAlignment="3" attributes="0">
-                  <Component id="deviceComboBox" alignment="3" min="-2" max="-2" attributes="0"/>
                   <Component id="findButton" alignment="3" min="-2" max="-2" attributes="0"/>
-              </Group>
-              <EmptySpace max="-2" attributes="0"/>
-              <Group type="103" groupAlignment="3" attributes="0">
                   <Component id="recordButton" alignment="3" min="-2" max="-2" attributes="0"/>
-                  <Component id="startButton" alignment="3" min="-2" max="-2" attributes="0"/>
-                  <Component id="useOldTestScriptButton" alignment="3" min="-2" max="-2" attributes="0"/>
-                  <Component id="saveTestScriptButton" alignment="3" min="-2" max="-2" attributes="0"/>
+                  <Component id="deviceComboBox" alignment="3" min="-2" max="-2" attributes="0"/>
               </Group>
               <EmptySpace max="-2" attributes="0"/>
-              <Component id="jScrollPane1" pref="173" max="32767" attributes="0"/>
+              <Group type="103" groupAlignment="1" attributes="0">
+                  <Group type="103" groupAlignment="3" attributes="0">
+                      <Component id="useOldTestScriptButton" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Component id="oldScriptTextField" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Component id="openOldScriptButton" alignment="3" min="-2" max="-2" attributes="0"/>
+                  </Group>
+                  <Component id="startButton" min="-2" max="-2" attributes="0"/>
+              </Group>
+              <EmptySpace max="-2" attributes="0"/>
+              <Component id="jScrollPane1" pref="228" max="32767" attributes="0"/>
               <EmptySpace max="-2" attributes="0"/>
               <Component id="clearInfoButton" min="-2" max="-2" attributes="0"/>
               <EmptySpace max="-2" attributes="0"/>
@@ -99,6 +101,7 @@
       </Properties>
       <Events>
         <EventHandler event="mouseReleased" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="startButtonMouseReleased"/>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="startButtonActionPerformed"/>
       </Events>
     </Component>
     <Component class="javax.swing.JComboBox" name="deviceComboBox">
@@ -138,12 +141,15 @@
         <EventHandler event="mouseReleased" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="clearInfoButtonMouseReleased"/>
       </Events>
     </Component>
-    <Component class="javax.swing.JButton" name="saveTestScriptButton">
+    <Component class="javax.swing.JTextField" name="oldScriptTextField">
+    </Component>
+    <Component class="javax.swing.JButton" name="openOldScriptButton">
       <Properties>
-        <Property name="text" type="java.lang.String" value="&#x4fdd;&#x5b58;&#x811a;&#x672c;"/>
+        <Property name="text" type="java.lang.String" value="&#x6253;&#x5f00;"/>
       </Properties>
       <Events>
-        <EventHandler event="mouseReleased" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="saveTestScriptButtonMouseReleased"/>
+        <EventHandler event="mouseReleased" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="openOldScriptButtonMouseReleased"/>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="openOldScriptButtonActionPerformed"/>
       </Events>
     </Component>
   </SubComponents>
