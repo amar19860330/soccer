@@ -15,6 +15,7 @@ import com.amar.soccer.test.android.event.ClickEvent;
 import com.amar.soccer.test.android.event.DeleteEvent;
 import com.amar.soccer.test.android.event.DragEvent;
 import com.amar.soccer.test.android.event.InputEvent;
+import com.amar.soccer.test.android.event.SleepEvent;
 import com.amar.soccer.test.android.event.TransActivityEvent;
 
 public class AndroidMonitor extends AndroidCommand implements CallBack<String>, Runnable
@@ -29,7 +30,7 @@ public class AndroidMonitor extends AndroidCommand implements CallBack<String>, 
 
 	public static final String RULER_IS_POSITION_Y = "^(.*ABS_MT_POSITION_Y.*)([0-9|abcdef|ABCDEF]{8})$";
 
-	public static final String RULER_IS_KEY_SHIFT_DOWN = "^。*SHIFT.*DOWN$";
+	public static final String RULER_IS_KEY_SHIFT_DOWN = "^.*SHIFT.*DOWN$";
 
 	public static final String RULER_IS_KEY_SHIFT_UP = "^.*SHIFT.*UP$";
 
@@ -59,10 +60,6 @@ public class AndroidMonitor extends AndroidCommand implements CallBack<String>, 
 
 	private String device;
 
-	/**
-	 * 判断无效值的方法
-	 */
-	private int invalidPosition = - 99999;
 
 	/**
 	 * 用于接收点击按下之后的坐标值
@@ -74,13 +71,13 @@ public class AndroidMonitor extends AndroidCommand implements CallBack<String>, 
 	 */
 	private boolean clickDown = false;
 
-	private int position_x = invalidPosition;
+	private int position_x = AndroidEvent.InvalidValue;
 
-	private int position_y = invalidPosition;
+	private int position_y = AndroidEvent.InvalidValue;
 
-	private int drag_x = invalidPosition;
+	private int drag_x = AndroidEvent.InvalidValue;
 
-	private int drag_y = invalidPosition;
+	private int drag_y = AndroidEvent.InvalidValue;
 
 	/**
 	 * 是否在拖拽中
@@ -172,9 +169,9 @@ public class AndroidMonitor extends AndroidCommand implements CallBack<String>, 
 		try
 		{
 			readCurrentActivityName();// 读取当前 activity name
-			
+
 			Thread.sleep( 100 );
-			
+
 			originShell( getCommandToDevice( device , CMD_ALL_EVENT ) );
 			bufferedReader = new BufferedReader( new InputStreamReader( getInput() ) );
 
@@ -209,8 +206,8 @@ public class AndroidMonitor extends AndroidCommand implements CallBack<String>, 
 							AndroidEvent event = new ClickEvent( position_x , position_y );
 							sendEvent( event );
 
-							position_x = invalidPosition;
-							position_y = invalidPosition;
+							position_x = AndroidEvent.InvalidValue;
+							position_y = AndroidEvent.InvalidValue;
 						}
 						else
 						{ // 发生了拖拽
@@ -218,10 +215,10 @@ public class AndroidMonitor extends AndroidCommand implements CallBack<String>, 
 							sendEvent( event );
 
 							isDrag = false;
-							drag_x = invalidPosition;
-							drag_y = invalidPosition;
-							position_x = invalidPosition;
-							position_y = invalidPosition;
+							drag_x = AndroidEvent.InvalidValue;
+							drag_y = AndroidEvent.InvalidValue;
+							position_x = AndroidEvent.InvalidValue;
+							position_y = AndroidEvent.InvalidValue;
 						}
 
 						clickDown = false;
@@ -231,13 +228,13 @@ public class AndroidMonitor extends AndroidCommand implements CallBack<String>, 
 					if ( isClickDown ) // 采集按下时的坐标
 					{
 						int position = getPositionX( line );
-						if ( position != invalidPosition )
+						if ( position != AndroidEvent.InvalidValue )
 						{
 							position_x = position;
 							continue;
 						}
 						position = getPositionY( line );
-						if ( position != invalidPosition )
+						if ( position != AndroidEvent.InvalidValue )
 						{
 							position_y = position;
 							isClickDown = false;
@@ -248,14 +245,14 @@ public class AndroidMonitor extends AndroidCommand implements CallBack<String>, 
 					if ( clickDown )
 					{
 						int x = getPositionX( line );
-						if ( x != invalidPosition && x != position_x )
+						if ( x != AndroidEvent.InvalidValue && x != position_x )
 						{
 							drag_x = x;
 							isDrag = true;
 							continue;
 						}
 						int y = getPositionY( line );
-						if ( y != invalidPosition && y != position_y )
+						if ( y != AndroidEvent.InvalidValue && y != position_y )
 						{
 							isDrag = true;
 							drag_y = y;
@@ -263,26 +260,25 @@ public class AndroidMonitor extends AndroidCommand implements CallBack<String>, 
 						}
 					}
 
-					int a = 3;
-					if ( a > 0 )
-						continue;
-
 					/************ 判断点击结束 ********/
 
 					/** **/
 					if ( isKeyShiftDown( line ) )
 					{
 						shiftIsDown = true;
+						continue;
 					}
 					else if ( isKeyShiftUp( line ) )
 					{
 						shiftIsDown = false;
+						continue;
 					}
 
 					if ( isKeyDeleteDown( line ) )
 					{
 						AndroidEvent event = new DeleteEvent();
 						sendEvent( event );
+						continue;
 					}
 
 					String key = isKeyCharDown( line );
@@ -411,13 +407,19 @@ public class AndroidMonitor extends AndroidCommand implements CallBack<String>, 
 		return matcher.matches();
 	}
 
+	long lastEventTime = 0;
+
 	void sendEvent( AndroidEvent event )
 	{
-		System.out.println( event.toString() );
-
 		if ( callbackEvent != null )
 		{
 			callbackEvent.callback( event );
+			if ( lastEventTime != 0 )
+			{
+				callbackEvent.callback( new SleepEvent( System.currentTimeMillis() - lastEventTime ) );
+
+			}
+			lastEventTime = System.currentTimeMillis();
 		}
 
 		if ( event instanceof TransActivityEvent )
@@ -446,7 +448,7 @@ public class AndroidMonitor extends AndroidCommand implements CallBack<String>, 
 
 	private int getPositionX( String originString )
 	{
-		int position = invalidPosition;
+		int position = AndroidEvent.InvalidValue;
 
 		try
 		{
@@ -466,7 +468,7 @@ public class AndroidMonitor extends AndroidCommand implements CallBack<String>, 
 
 	private int getPositionY( String originString )
 	{
-		int position = invalidPosition;
+		int position = AndroidEvent.InvalidValue;
 
 		try
 		{

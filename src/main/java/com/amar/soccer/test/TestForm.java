@@ -87,13 +87,6 @@ public class TestForm extends javax.swing.JPanel
 				findButtonMouseReleased( evt );
 			}
 		} );
-		findButton.addActionListener( new java.awt.event.ActionListener()
-		{
-			public void actionPerformed( java.awt.event.ActionEvent evt )
-			{
-				findButtonActionPerformed( evt );
-			}
-		} );
 
 		useOldTestScriptButton.setText( "\u4f7f\u7528\u65e7\u7684" );
 		useOldTestScriptButton.addMouseListener( new java.awt.event.MouseAdapter()
@@ -119,13 +112,6 @@ public class TestForm extends javax.swing.JPanel
 			public void mouseReleased( java.awt.event.MouseEvent evt )
 			{
 				openOldScriptButtonMouseReleased( evt );
-			}
-		} );
-		openOldScriptButton.addActionListener( new java.awt.event.ActionListener()
-		{
-			public void actionPerformed( java.awt.event.ActionEvent evt )
-			{
-				openOldScriptButtonActionPerformed( evt );
 			}
 		} );
 
@@ -177,11 +163,6 @@ public class TestForm extends javax.swing.JPanel
 						.addPreferredGap( javax.swing.LayoutStyle.ComponentPlacement.RELATED ).addComponent( clearInfoButton ).addContainerGap() ) );
 	}// </editor-fold>
 	//GEN-END:initComponents
-
-	private void openOldScriptButtonActionPerformed( java.awt.event.ActionEvent evt )
-	{
-		// TODO add your handling code here:
-	}
 
 	private void openOldScriptButtonMouseReleased( java.awt.event.MouseEvent evt )
 	{
@@ -238,11 +219,6 @@ public class TestForm extends javax.swing.JPanel
 		setInfo( "" );
 	}
 
-	private void findButtonActionPerformed( java.awt.event.ActionEvent evt )
-	{
-		// TODO add your handling code here:
-	}
-
 	private void startButtonMouseReleased( java.awt.event.MouseEvent evt )
 	{
 		if ( eventList == null )
@@ -258,6 +234,7 @@ public class TestForm extends javax.swing.JPanel
 			return;
 		}
 
+		setInfo( "开始测试" );
 		TestReaderFromEventFile testReaderFromEventFile = new TestReaderFromEventFile();
 		testReaderFromEventFile.excuteScript( device , eventList , new CallBack<String>()
 		{
@@ -271,10 +248,12 @@ public class TestForm extends javax.swing.JPanel
 		} );
 	}
 
-	public synchronized void setInfo(String info)
+	public synchronized void setInfo( String info )
 	{
 		infoTextArea.setText( info );
+		infoTextArea.setCaretPosition( infoTextArea.getDocument().getLength() );
 	}
+
 	public void showInfo( String info )
 	{
 		JOptionPane.showMessageDialog( this , info );
@@ -328,6 +307,8 @@ public class TestForm extends javax.swing.JPanel
 				recordButton.setText( "开始录制" );
 				isRecord = false;
 				setInfo( "保存成功." );
+				eventList = testRecordReceiver.getEventList();
+				oldScriptTextField.setText( jFileChooser1.getSelectedFile().getPath() );
 			}
 		}
 		else

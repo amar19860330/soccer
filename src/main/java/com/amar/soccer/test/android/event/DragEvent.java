@@ -35,6 +35,11 @@ public class DragEvent extends AndroidEvent
 		this.start_y = start_y;
 		this.end_x = end_x;
 		this.end_y = end_y;
+
+		if ( end_x == InvalidValue )
+			end_x = start_x;
+		if ( end_y == InvalidValue )
+			end_y = start_y;
 	}
 
 	public int [] getPosition()
@@ -88,5 +93,4 @@ public class DragEvent extends AndroidEvent
 		this.end_y = end_y;
 	}
 
-	
 }

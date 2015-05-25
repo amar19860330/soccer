@@ -42,6 +42,7 @@ public class AndroidInput extends AndroidShell implements Runnable
 
 			for( AndroidEvent event : androidEventList )
 			{
+				callBack( "即将执行:" + event.toString() );
 				if ( event instanceof ClickEvent )
 				{
 					ClickEvent e = ( ClickEvent ) event;
@@ -84,8 +85,10 @@ public class AndroidInput extends AndroidShell implements Runnable
 				{
 					callBack( "未匹配的事件类型" );
 				}
+
+				Thread.sleep( 50 );
 			}
-			
+
 			callBack( "测试完毕" );
 		}
 		catch ( Exception e )
@@ -113,9 +116,14 @@ public class AndroidInput extends AndroidShell implements Runnable
 	{
 		String currentActivityName = "";
 		startTime = System.currentTimeMillis();
-		while ( ! event.getToActivity().equals( currentActivityName ) || ( System.currentTimeMillis() - startTime ) < timeOut )
+		while ( true )
 		{
 			currentActivityName = new GetAndroidInfoImmediately( device , null ).getCurrentActivityName();
+			if ( event.getToActivity().equals( currentActivityName ) || ( System.currentTimeMillis() - startTime ) > timeOut )
+			{
+				break;
+			}
+
 			try
 			{
 				Thread.sleep( cycle_period );

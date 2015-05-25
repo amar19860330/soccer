@@ -1,5 +1,7 @@
 package com.amar.soccer.test.android;
 
+import java.util.List;
+
 import com.amar.soccer.test.android.event.AndroidEvent;
 import com.amar.soccer.test.android.event.AndroidEventTrans;
 import com.amar.soccer.util.PropertiesUtil;
@@ -33,6 +35,11 @@ public class TestRecordReceiver implements CallBack<AndroidEvent>
 	public void setUiCallBack( CallBack<AndroidEvent> uiCallBack )
 	{
 		this.uiCallBack = uiCallBack;
+	}
+
+	public List<AndroidEvent> getEventList()
+	{
+		return androidEventTrans == null ? null : androidEventTrans.getAndroidEventList();
 	}
 
 	@Override
