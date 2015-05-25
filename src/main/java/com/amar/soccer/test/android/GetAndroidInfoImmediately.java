@@ -9,7 +9,7 @@ public class GetAndroidInfoImmediately extends AndroidCommand implements Runnabl
 
 	public static final String CMD_QUERY_CURRENT_ACTIVITY = "dumpsys input | grep FocusedApplication";
 
-	public static final String RULER_OF_CURRENT_ACTIVITY_NAME = "^(.*ActivityRecord\\{[0-9|A-Z|a-z]*\\s)(.*)(\\}{3}.*\\n*)$";
+	public static final String RULER_OF_CURRENT_ACTIVITY_NAME = "^(.*ActivityRecord\\{[0-9|A-Z|a-z]*\\s)(.*)(\\s.*\\}{3}.*\\n*)$";
 
 	CallBack<String> callBack;
 
@@ -21,13 +21,14 @@ public class GetAndroidInfoImmediately extends AndroidCommand implements Runnabl
 
 	public static void main( String args[] )
 	{
-		GetAndroidInfoImmediately getAndroidInfoImmediately = new GetAndroidInfoImmediately( "192.168.56.101:5555" , null );
-		getAndroidInfoImmediately.getCurrentActivityName();
+		GetAndroidInfoImmediately getAndroidInfoImmediately = new GetAndroidInfoImmediately( "192.168.112.101:5555" , null );
+		System.out.println( getAndroidInfoImmediately.getCurrentActivityName() );
 
 	}
 
 	/**
 	 * "  FocusedApplication: name='AppWindowToken{53914d90 token=Token{538a43bc ActivityRecord{538b0314 com.amar.hello2/.A3}}}', dispatchingTimeout=5000.000ms\n\n";
+	 * "  FocusedApplication: name='AppWindowToken{3983a2ae token=Token{177a8f29 ActivityRecord{13ddc4b0 u0 com.libianc.android.ued/.lib.libued.activity.HomeActivity_ t539}}}', dispatchingTimeout=5000.000ms\n\n"
 	 * 
 	 * @param device
 	 * @return
@@ -44,6 +45,18 @@ public class GetAndroidInfoImmediately extends AndroidCommand implements Runnabl
 			if ( matcher.matches() && matcher.groupCount() == 3 )
 			{
 				activityInfo = matcher.group( 2 );
+				if ( activityInfo.contains( " " ) )
+				{
+					String [] array = activityInfo.split( " " );
+					for( String data : array )
+					{
+						if ( data.contains( "." ) )
+						{
+							activityInfo = data;
+							break;
+						}
+					}
+				}
 			}
 		}
 		catch ( Exception e )
@@ -90,7 +103,7 @@ public class GetAndroidInfoImmediately extends AndroidCommand implements Runnabl
 	public void run()
 	{
 		String currentActivity = getCurrentActivityName();
-		
+
 		if ( callBack != null )
 		{
 			callBack.callback( currentActivity );

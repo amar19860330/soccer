@@ -13,6 +13,7 @@ import javax.swing.JOptionPane;
 
 import com.amar.soccer.test.android.AndroidShell;
 import com.amar.soccer.test.android.CallBack;
+import com.amar.soccer.test.android.TestReaderFromEventFile;
 import com.amar.soccer.test.android.TestRecordReceiver;
 import com.amar.soccer.test.android.event.AndroidEvent;
 import com.amar.soccer.util.Shell;
@@ -73,13 +74,6 @@ public class TestForm extends javax.swing.JPanel
 			public void mouseReleased( java.awt.event.MouseEvent evt )
 			{
 				startButtonMouseReleased( evt );
-			}
-		} );
-		startButton.addActionListener( new java.awt.event.ActionListener()
-		{
-			public void actionPerformed( java.awt.event.ActionEvent evt )
-			{
-				startButtonActionPerformed( evt );
 			}
 		} );
 
@@ -189,11 +183,6 @@ public class TestForm extends javax.swing.JPanel
 		// TODO add your handling code here:
 	}
 
-	private void startButtonActionPerformed( java.awt.event.ActionEvent evt )
-	{
-		// TODO add your handling code here:
-	}
-
 	private void openOldScriptButtonMouseReleased( java.awt.event.MouseEvent evt )
 	{
 		// TODO add your handling code here:
@@ -209,6 +198,8 @@ public class TestForm extends javax.swing.JPanel
 		}
 	}
 
+	List<AndroidEvent> eventList;
+
 	private void useOldTestScriptButtonMouseReleased( java.awt.event.MouseEvent evt )
 	{
 		JFileChooser jFileChooser1 = new JFileChooser();
@@ -223,13 +214,28 @@ public class TestForm extends javax.swing.JPanel
 		int ch = jFileChooser1.showDialog( this , "添加文件" );
 		if ( ch == JFileChooser.APPROVE_OPTION )
 		{
-			oldScriptTextField.setText( jFileChooser1.getSelectedFile().getPath() );
+			TestReaderFromEventFile testReaderFromEventFile = new TestReaderFromEventFile();
+			eventList = testReaderFromEventFile.xmlToList( jFileChooser1.getSelectedFile().getPath() );
+			if ( eventList == null )
+			{
+				setInfo( "读取测试脚本失败" );
+				oldScriptTextField.setText( "" );
+			}
+			else
+			{
+				setInfo( "读取测试脚本成功" );
+				oldScriptTextField.setText( jFileChooser1.getSelectedFile().getPath() );
+				for( AndroidEvent event : eventList )
+				{
+					setInfo( infoTextArea.getText() + "\n" + event.toString() );
+				}
+			}
 		}
 	}
 
 	private void clearInfoButtonMouseReleased( java.awt.event.MouseEvent evt )
 	{
-		infoTextArea.setText( "" );
+		setInfo( "" );
 	}
 
 	private void findButtonActionPerformed( java.awt.event.ActionEvent evt )
@@ -239,8 +245,36 @@ public class TestForm extends javax.swing.JPanel
 
 	private void startButtonMouseReleased( java.awt.event.MouseEvent evt )
 	{
+		if ( eventList == null )
+		{
+			showInfo( "没有测试数据" );
+			return;
+		}
+
+		String device = deviceComboBox.getSelectedItem().toString();
+		if ( device.equals( chooseDevicePlease ) || device.equals( noDevice ) )
+		{
+			setInfo( chooseDevicePlease );
+			return;
+		}
+
+		TestReaderFromEventFile testReaderFromEventFile = new TestReaderFromEventFile();
+		testReaderFromEventFile.excuteScript( device , eventList , new CallBack<String>()
+		{
+
+			@Override
+			public void callback( String info )
+			{
+				setInfo( infoTextArea.getText() + "\n" + info );
+			}
+
+		} );
 	}
 
+	public synchronized void setInfo(String info)
+	{
+		infoTextArea.setText( info );
+	}
 	public void showInfo( String info )
 	{
 		JOptionPane.showMessageDialog( this , info );
@@ -293,7 +327,7 @@ public class TestForm extends javax.swing.JPanel
 				testRecordReceiver = null;
 				recordButton.setText( "开始录制" );
 				isRecord = false;
-				infoTextArea.setText( "保存成功." );
+				setInfo( "保存成功." );
 			}
 		}
 		else
@@ -301,7 +335,7 @@ public class TestForm extends javax.swing.JPanel
 			String device = deviceComboBox.getSelectedItem().toString();
 			if ( device.equals( chooseDevicePlease ) || device.equals( noDevice ) )
 			{
-				infoTextArea.setText( chooseDevicePlease );
+				setInfo( chooseDevicePlease );
 				return;
 			}
 			isRecord = true;
@@ -315,7 +349,7 @@ public class TestForm extends javax.swing.JPanel
 				@Override
 				public void callback( AndroidEvent t )
 				{
-					infoTextArea.setText( infoTextArea.getText() + "\n" + t.toString() );
+					setInfo( infoTextArea.getText() + "\n" + t.toString() );
 				}
 
 			} );

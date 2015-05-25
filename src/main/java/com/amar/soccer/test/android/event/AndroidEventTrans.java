@@ -55,33 +55,6 @@ public class AndroidEventTrans
 		}
 	}
 
-	public List<AndroidEvent> xmlToList( String fileName )
-	{
-		List<AndroidEvent> list = null;
-		try
-		{
-			AndroidEventTrans androidEvents = null;
-
-			File file = new File( fileName );
-			JAXBContext jaxbContext = JAXBContext.newInstance( AndroidEventTrans.class );
-			Unmarshaller um = jaxbContext.createUnmarshaller();
-			androidEvents = ( AndroidEventTrans ) um.unmarshal( file );
-			if ( androidEvents != null && androidEvents.getAndroidEventList() != null )
-			{
-				list = androidEvents.getAndroidEventList();
-				for( AndroidEvent event : list )
-				{
-					System.out.println( event.toString() );
-				}
-			}
-		}
-		catch ( JAXBException e )
-		{
-			e.printStackTrace();
-		}
-		return list;
-	}
-
 	public static void main( String args[] )
 	{
 		// java to xml
@@ -127,8 +100,8 @@ public class AndroidEventTrans
 		TransActivityEvent transActivityEvent_2 = new TransActivityEvent( "C.java" , "d.java" );
 		SleepEvent sleepEvent_1 = new SleepEvent( 200 );
 		SleepEvent sleepEvent_2 = new SleepEvent( 300 );
-		DragEvent dragEvent_1 = new DragEvent(12,33);
-		DragEvent dragEvent_2 = new DragEvent(555,367);
+		DragEvent dragEvent_1 = new DragEvent(33,22,12,33);
+		DragEvent dragEvent_2 = new DragEvent(77,44,555,367);
 		DeleteEvent deleteEvent_1 = new DeleteEvent();
 		DeleteEvent deleteEvent_2 = new DeleteEvent();
 		

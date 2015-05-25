@@ -21,6 +21,10 @@ public class TestRecordReceiver implements CallBack<AndroidEvent>
 
 	public void saveRecord( String fileName )
 	{
+		if ( androidEventTrans == null )
+		{
+			androidEventTrans = new AndroidEventTrans();
+		}
 		androidEventTrans.listToXml( fileName );
 	}
 
@@ -34,7 +38,6 @@ public class TestRecordReceiver implements CallBack<AndroidEvent>
 	@Override
 	public void callback( AndroidEvent event )
 	{
-		System.out.println( "receiver:" + event.toString() );
 		if ( androidEventTrans == null )
 		{
 			androidEventTrans = new AndroidEventTrans();

@@ -70,11 +70,6 @@ public class AndroidMonitor extends AndroidCommand implements CallBack<String>, 
 	private boolean isClickDown = false;
 
 	/**
-	 * 用于接收抬起之后的坐标值
-	 */
-	private boolean isClickUp = false;
-
-	/**
 	 * 用于判断点击之后何时抬起，是否有拖拽操作
 	 */
 	private boolean clickDown = false;
@@ -82,6 +77,10 @@ public class AndroidMonitor extends AndroidCommand implements CallBack<String>, 
 	private int position_x = invalidPosition;
 
 	private int position_y = invalidPosition;
+
+	private int drag_x = invalidPosition;
+
+	private int drag_y = invalidPosition;
 
 	/**
 	 * 是否在拖拽中
@@ -100,12 +99,12 @@ public class AndroidMonitor extends AndroidCommand implements CallBack<String>, 
 
 	CallBack<AndroidEvent> callbackEvent;
 
-	public static void main(String args[])
+	public static void main( String args[] )
 	{
-		AndroidMonitor androidMonitor = new AndroidMonitor( "192.168.56.101:5555",null );
+		AndroidMonitor androidMonitor = new AndroidMonitor( "192.168.112.101:5555" , null );
 		androidMonitor.run();
 	}
-	
+
 	public AndroidMonitor( String device , CallBack<AndroidEvent> callbackEvent )
 	{
 		init();
@@ -153,8 +152,8 @@ public class AndroidMonitor extends AndroidCommand implements CallBack<String>, 
 				bufferedReader.close();
 				bufferedReader = null;
 			}
-			
-			if(threadExecutor!=null)
+
+			if ( threadExecutor != null )
 			{
 				threadExecutor.shutdownNow();
 				threadExecutor = null;
@@ -173,6 +172,9 @@ public class AndroidMonitor extends AndroidCommand implements CallBack<String>, 
 		try
 		{
 			readCurrentActivityName();// 读取当前 activity name
+			
+			Thread.sleep( 100 );
+			
 			originShell( getCommandToDevice( device , CMD_ALL_EVENT ) );
 			bufferedReader = new BufferedReader( new InputStreamReader( getInput() ) );
 
@@ -190,6 +192,8 @@ public class AndroidMonitor extends AndroidCommand implements CallBack<String>, 
 						line = line.trim();
 					}
 
+					// System.out.println( line );
+
 					/************ 判断点击开始 ********/
 					if ( isClickDown( line ) )
 					{
@@ -200,7 +204,26 @@ public class AndroidMonitor extends AndroidCommand implements CallBack<String>, 
 
 					if ( isClickUp( line ) )
 					{
-						isClickUp = true;
+						if ( ! isDrag ) // 没有拖拽，直接点击
+						{
+							AndroidEvent event = new ClickEvent( position_x , position_y );
+							sendEvent( event );
+
+							position_x = invalidPosition;
+							position_y = invalidPosition;
+						}
+						else
+						{ // 发生了拖拽
+							AndroidEvent event = new DragEvent( position_x , position_y , drag_x , drag_y );
+							sendEvent( event );
+
+							isDrag = false;
+							drag_x = invalidPosition;
+							drag_y = invalidPosition;
+							position_x = invalidPosition;
+							position_y = invalidPosition;
+						}
+
 						clickDown = false;
 						continue;
 					}
@@ -220,32 +243,6 @@ public class AndroidMonitor extends AndroidCommand implements CallBack<String>, 
 							isClickDown = false;
 							continue;
 						}
-
-					}
-
-					if ( isClickUp )// 采集抬起时的坐标
-					{
-						int x = getPositionX( line );
-						if ( x != invalidPosition )
-						{
-							position_x = x;
-							continue;
-						}
-						int y = getPositionY( line );
-						if ( y != invalidPosition )
-						{
-							position_y = y;
-
-							if ( ! isDrag )
-							{
-								AndroidEvent event = new ClickEvent( position_x , position_y );
-								sendEvent( event );
-							}
-							isClickUp = false;
-							clickDown = false;
-							isDrag = false;
-							continue;
-						}
 					}
 
 					if ( clickDown )
@@ -253,7 +250,7 @@ public class AndroidMonitor extends AndroidCommand implements CallBack<String>, 
 						int x = getPositionX( line );
 						if ( x != invalidPosition && x != position_x )
 						{
-							position_x = x;
+							drag_x = x;
 							isDrag = true;
 							continue;
 						}
@@ -261,12 +258,14 @@ public class AndroidMonitor extends AndroidCommand implements CallBack<String>, 
 						if ( y != invalidPosition && y != position_y )
 						{
 							isDrag = true;
-							position_y = y;
-							AndroidEvent event = new DragEvent( position_x , position_y );
-							sendEvent( event );
+							drag_y = y;
 							continue;
 						}
 					}
+
+					int a = 3;
+					if ( a > 0 )
+						continue;
 
 					/************ 判断点击结束 ********/
 
@@ -315,7 +314,7 @@ public class AndroidMonitor extends AndroidCommand implements CallBack<String>, 
 
 	protected void init()
 	{
-		//threadExecutor = Executors.newSingleThreadExecutor();
+		// threadExecutor = Executors.newSingleThreadExecutor();
 		threadExecutor = Executors.newCachedThreadPool();
 		shiftMap = new HashMap<String,String>();
 		shiftMap.put( "`" , "~" );
@@ -412,7 +411,7 @@ public class AndroidMonitor extends AndroidCommand implements CallBack<String>, 
 		return matcher.matches();
 	}
 
-	synchronized void sendEvent( AndroidEvent event )
+	void sendEvent( AndroidEvent event )
 	{
 		System.out.println( event.toString() );
 

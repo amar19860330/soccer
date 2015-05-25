@@ -1,25 +1,60 @@
 package com.amar.soccer.test.android;
 
 import java.io.EOFException;
+import java.io.File;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBException;
+import javax.xml.bind.Unmarshaller;
+
 import com.amar.soccer.test.android.event.AndroidEvent;
+import com.amar.soccer.test.android.event.AndroidEventTrans;
 import com.amar.soccer.util.PropertiesUtil;
 
 public class TestReaderFromEventFile
 {
+	String device;
 
-	public static void main( String [] args )
+	public void excuteScript( String device , List<AndroidEvent> eventList , CallBack<String> callBack )
 	{
-		TestReaderFromEventFile testReader= new TestReaderFromEventFile();
-		testReader.readEventFile( TestRecordReceiver.DEFAULT_FILE_NAME );
+		this.device = device;
+		AndroidInput androidInput = new AndroidInput( device , eventList , callBack );
+		Thread androidInputThread = new Thread(androidInput);
+		
+		androidInputThread.start();
+	}
+
+	public List<AndroidEvent> xmlToList( String fileName )
+	{
+		List<AndroidEvent> list = null;
+		try
+		{
+			AndroidEventTrans androidEvents = null;
+
+			File file = new File( fileName );
+			JAXBContext jaxbContext = JAXBContext.newInstance( AndroidEventTrans.class );
+			Unmarshaller um = jaxbContext.createUnmarshaller();
+			androidEvents = ( AndroidEventTrans ) um.unmarshal( file );
+			if ( androidEvents != null && androidEvents.getAndroidEventList() != null )
+			{
+				list = androidEvents.getAndroidEventList();
+			}
+		}
+		catch ( JAXBException e )
+		{
+			e.printStackTrace();
+			list = null;
+		}
+		return list;
 	}
 
 	private List<AndroidEvent> eventList;
 
+	@SuppressWarnings({ "unused" })
 	private void readEventFile( String eventFileName )
 	{
 		if ( eventList == null )
@@ -41,7 +76,7 @@ public class TestReaderFromEventFile
 				}
 			}
 		}
-		catch(EOFException e)
+		catch ( EOFException e )
 		{
 			e.printStackTrace();
 		}
@@ -53,7 +88,7 @@ public class TestReaderFromEventFile
 		{
 			e.printStackTrace();
 		}
-		
+
 		System.out.println( "finish" );
 		for( AndroidEvent androidEvent : eventList )
 		{
