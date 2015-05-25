@@ -42,7 +42,7 @@ public class AndroidInput extends AndroidShell implements Runnable
 
 			for( AndroidEvent event : androidEventList )
 			{
-				callBack( "即将执行:" + event.toString() );
+				callBack( "即将执行:" + event.toString() , CallBack.STATUS_WORK_COMPLETE );
 				if ( event instanceof ClickEvent )
 				{
 					ClickEvent e = ( ClickEvent ) event;
@@ -79,30 +79,31 @@ public class AndroidInput extends AndroidShell implements Runnable
 				else if ( event instanceof DragEvent )
 				{
 					DragEvent e = ( DragEvent ) event;
-					cmdNoWait( perCommand + String.format( CMD_CLICK , e.getStart_x() + "" , e.getStart_y() + "" , e.getEnd_x() + "" , e.getEnd_y() + "" ) );
+					String cmd = perCommand + String.format( CMD_DRAG , e.getStart_x() + "" , e.getStart_y() + "" , e.getEnd_x() + "" , e.getEnd_y() + "" );
+					cmdNoWait( cmd );
 				}
 				else
 				{
-					callBack( "未匹配的事件类型" );
+					callBack( "未匹配的事件类型" , CallBack.STATUS_WORK_COMPLETE );
 				}
 
 				Thread.sleep( 50 );
 			}
 
-			callBack( "测试完毕" );
+			callBack( "测试完毕" , CallBack.STATUS_WORK_COMPLETE );
 		}
 		catch ( Exception e )
 		{
 			e.printStackTrace();
-			callBack( "发生异常\n" + e.getMessage() );
+			callBack( "发生异常\n" + e.getMessage() , CallBack.STATUS_WORK_ERROR );
 		}
 	}
 
-	private void callBack( String info )
+	private void callBack( String info , int status )
 	{
 		if ( callBack != null )
 		{
-			callBack.callback( info );
+			callBack.callback( info , 0 );
 		}
 	}
 

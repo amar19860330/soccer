@@ -106,7 +106,7 @@ public class GetAndroidInfoImmediately extends AndroidCommand implements Runnabl
 
 		if ( callBack != null )
 		{
-			callBack.callback( currentActivity );
+			callBack.callback( currentActivity ,0);
 		}
 	}
 

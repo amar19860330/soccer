@@ -110,7 +110,7 @@ public class AndroidMonitor extends AndroidCommand implements CallBack<String>, 
 	}
 
 	@Override
-	public void callback( String info )
+	public void callback( String info ,int status)
 	{
 		if ( ! currentActivityName.equals( info ) )
 		{
@@ -413,10 +413,10 @@ public class AndroidMonitor extends AndroidCommand implements CallBack<String>, 
 	{
 		if ( callbackEvent != null )
 		{
-			callbackEvent.callback( event );
+			callbackEvent.callback( event ,0);
 			if ( lastEventTime != 0 )
 			{
-				callbackEvent.callback( new SleepEvent( System.currentTimeMillis() - lastEventTime ) );
+				callbackEvent.callback( new SleepEvent( System.currentTimeMillis() - lastEventTime ) ,0);
 
 			}
 			lastEventTime = System.currentTimeMillis();

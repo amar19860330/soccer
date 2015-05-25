@@ -43,7 +43,7 @@ public class TestRecordReceiver implements CallBack<AndroidEvent>
 	}
 
 	@Override
-	public void callback( AndroidEvent event )
+	public void callback( AndroidEvent event ,int status)
 	{
 		if ( androidEventTrans == null )
 		{
@@ -57,7 +57,7 @@ public class TestRecordReceiver implements CallBack<AndroidEvent>
 
 		if ( uiCallBack != null )
 		{
-			uiCallBack.callback( event );
+			uiCallBack.callback( event ,0);
 		}
 	}
 

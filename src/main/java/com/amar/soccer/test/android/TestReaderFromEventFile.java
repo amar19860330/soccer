@@ -19,13 +19,26 @@ public class TestReaderFromEventFile
 {
 	String device;
 
+	AndroidInput androidInput;
+
+	Thread androidInputThread;
+
 	public void excuteScript( String device , List<AndroidEvent> eventList , CallBack<String> callBack )
 	{
 		this.device = device;
-		AndroidInput androidInput = new AndroidInput( device , eventList , callBack );
-		Thread androidInputThread = new Thread(androidInput);
-		
+		androidInput = new AndroidInput( device , eventList , callBack );
+		androidInputThread = new Thread( androidInput );
 		androidInputThread.start();
+	}
+
+	public void stopTest()
+	{
+		if ( androidInputThread != null )
+		{
+			androidInputThread.interrupt();
+			androidInputThread = null;
+			androidInput = null;
+		}
 	}
 
 	public List<AndroidEvent> xmlToList( String fileName )
@@ -54,7 +67,7 @@ public class TestReaderFromEventFile
 
 	private List<AndroidEvent> eventList;
 
-	@SuppressWarnings({ "unused" })
+	@SuppressWarnings( { "unused" } )
 	private void readEventFile( String eventFileName )
 	{
 		if ( eventList == null )

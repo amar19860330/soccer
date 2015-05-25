@@ -219,6 +219,8 @@ public class TestForm extends javax.swing.JPanel
 		setInfo( "" );
 	}
 
+	boolean isTesting = false;
+	TestReaderFromEventFile testReaderFromEventFile;
 	private void startButtonMouseReleased( java.awt.event.MouseEvent evt )
 	{
 		if ( eventList == null )
@@ -234,18 +236,31 @@ public class TestForm extends javax.swing.JPanel
 			return;
 		}
 
-		setInfo( "开始测试" );
-		TestReaderFromEventFile testReaderFromEventFile = new TestReaderFromEventFile();
-		testReaderFromEventFile.excuteScript( device , eventList , new CallBack<String>()
+		if(isTesting)
 		{
-
-			@Override
-			public void callback( String info )
+			isTesting = false;
+			testReaderFromEventFile.stopTest();
+			setInfo( "测试中止" );
+			startButton.setText( "开始测试" );
+		}
+		else
+		{
+			setInfo( "开始测试" );
+			startButton.setText( "中止测试" );
+			testReaderFromEventFile = new TestReaderFromEventFile();
+			testReaderFromEventFile.excuteScript( device , eventList , new CallBack<String>()
 			{
-				setInfo( infoTextArea.getText() + "\n" + info );
-			}
 
-		} );
+				@Override
+				public void callback( String info ,int status)
+				{
+					setInfo( infoTextArea.getText() + "\n" + info );
+				}
+
+			} );
+			isTesting = true;
+		}
+		
 	}
 
 	public synchronized void setInfo( String info )
@@ -302,12 +317,12 @@ public class TestForm extends javax.swing.JPanel
 			if ( ch == JFileChooser.APPROVE_OPTION )
 			{
 				testRecordReceiver.saveRecord( jFileChooser1.getSelectedFile().getPath() );
+				eventList = testRecordReceiver.getEventList();
 				testRecordReceiver.stop();
 				testRecordReceiver = null;
 				recordButton.setText( "开始录制" );
 				isRecord = false;
 				setInfo( "保存成功." );
-				eventList = testRecordReceiver.getEventList();
 				oldScriptTextField.setText( jFileChooser1.getSelectedFile().getPath() );
 			}
 		}
@@ -328,7 +343,7 @@ public class TestForm extends javax.swing.JPanel
 			{
 
 				@Override
-				public void callback( AndroidEvent t )
+				public void callback( AndroidEvent t ,int status)
 				{
 					setInfo( infoTextArea.getText() + "\n" + t.toString() );
 				}
