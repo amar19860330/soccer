@@ -1,18 +1,46 @@
 package com.amar.soccer.test.android;
 
 import java.util.List;
+import java.util.Map;
 
+import com.amar.soccer.util.MathUtil;
 import com.android.ddmlib.IDevice;
 import com.android.hierarchyviewerlib.device.DeviceBridge;
 import com.android.hierarchyviewerlib.device.ViewServerDevice;
 import com.android.hierarchyviewerlib.models.ViewNode;
+import com.android.hierarchyviewerlib.models.ViewNode.Property;
 import com.android.hierarchyviewerlib.models.Window;
 
 public class AccuratelyAnalyze
 {
 	public static void main( String [] args )
 	{
-		AccuratelyAnalyze accuratelyAnalyze = new AccuratelyAnalyze( "E:/android/sdk/platform-tools/adb.exe" , "192.168.112.101:5555" , 1000 );
+		// AccuratelyAnalyze accuratelyAnalyze = new AccuratelyAnalyze( "E:/android/sdk/platform-tools/adb.exe" , "192.168.112.101:5555" , 1000 );
+		AccuratelyAnalyze accuratelyAnalyze = new AccuratelyAnalyze( "D:/data/Android/sdk/platform-tools/adb.exe" , "192.168.56.101:5555" , 1000 );
+
+		ViewNode rootViewNode = accuratelyAnalyze.getRootViewNode();
+		ViewNode focusViewNode = accuratelyAnalyze.focusViewIsClick( 420 , 390 , rootViewNode );
+
+		if ( focusViewNode != null )
+		{
+			System.out.println( focusViewNode.id + ":" + focusViewNode.namedProperties.get( "text:mText" ).value );
+		}
+		else
+		{
+			System.out.println( "not in" );
+		}
+
+		focusViewNode = accuratelyAnalyze.focusViewIsClick( 120 , 390 , rootViewNode );
+		if ( focusViewNode != null )
+		{
+			System.out.println( focusViewNode.id );
+		}
+		else
+		{
+			System.out.println( "not in" );
+		}
+
+		//accuratelyAnalyze.destory();
 		System.out.println( accuratelyAnalyze.getCurrentActivity() );
 	}
 
@@ -27,6 +55,30 @@ public class AccuratelyAnalyze
 		this.adbPath = adbPath;
 		this.deviceName = deviceName;
 		this.connectTime = connectTime;
+	}
+
+	public ViewNode focusViewIsClick( int x , int y , ViewNode rootViewNode )
+	{
+		ViewNode focusViewNode = null;
+		if ( rootViewNode != null )
+		{
+			ViewNode topFocusViewNode = findFocusedViewWhoIsTop( rootViewNode );
+			if ( topFocusViewNode != null )
+			{
+				System.out.println( topFocusViewNode.id );
+				int size[] = getSize( topFocusViewNode );
+				if ( size != null )
+				{
+					boolean viewInThisArea = MathUtil.inThisArea( x , y - actionBarHeight , size[ 0 ] , size[ 1 ] , size[ 2 ] , size[ 3 ] );
+					if ( viewInThisArea )
+					{
+						focusViewNode = topFocusViewNode;
+					}
+				}
+			}
+		}
+
+		return focusViewNode;
 	}
 
 	public void demo1() throws Exception
@@ -78,12 +130,12 @@ public class AccuratelyAnalyze
 
 			ViewNode entryViewNode = viewServerDevice.loadWindowData( focusedWindow );
 			ViewNode viewNode = findViewById( entryViewNode , "id/help_item_01" );
-			
+
 			printInfo( viewNode );
 		}
 		DeviceBridge.terminate();
 	}
-	
+
 	public void demo2() throws Exception
 	{
 		p( "start" );
@@ -136,11 +188,50 @@ public class AccuratelyAnalyze
 		}
 		DeviceBridge.terminate();
 	}
-	
+
 	public String getCurrentActivity()
 	{
+		Window window = getWindow();
+
+		String currentActivity = "";
+
+		if ( window != null )
+			currentActivity = window.getTitle();
+
+		destory();
+		return currentActivity;
+	}
+
+	public void destory()
+	{
+		actionBarHeight = 0;
+		DeviceBridge.terminate();
+	}
+
+	int actionBarHeight = 0;
+
+	private void detectActionBarHeight( ViewNode rootViewNode )
+	{
+		int rootHeight = rootViewNode.height;
+
+		if ( rootViewNode.children != null && rootViewNode.children.size() > 0 )
+		{
+			ViewNode secondViewNode = rootViewNode.children.get( 0 );
+			if ( secondViewNode.children != null && secondViewNode.children.size() == 3 && "id/content".equals( secondViewNode.children.get( 2 ).id ) )
+			{
+				int contentHight = secondViewNode.children.get( 2 ).height;
+				if ( contentHight < rootHeight )
+				{
+					actionBarHeight = rootHeight - contentHight;
+				}
+			}
+		}
+	}
+
+	public ViewNode getRootViewNode()
+	{
+		ViewNode rootViewNode = null;
 		DeviceBridge.initDebugBridge( adbPath );
-		String currentActivity = null;
 		try
 		{
 			Thread.sleep( connectTime );
@@ -180,15 +271,64 @@ public class AccuratelyAnalyze
 		{
 			if ( window.getHashCode() == viewServerDevice.getFocusedWindow() )
 			{
-				currentActivity = window.getTitle();
+				rootViewNode = viewServerDevice.loadWindowData( window );
 				break;
 			}
 		}
-		DeviceBridge.terminate();
-
-		return currentActivity;
+		detectActionBarHeight( rootViewNode );
+		return rootViewNode;
 	}
-	
+
+	public Window getWindow()
+	{
+		Window currentWindow = null;
+		DeviceBridge.initDebugBridge( adbPath );
+		try
+		{
+			Thread.sleep( connectTime );
+		}
+		catch ( InterruptedException e )
+		{
+			e.printStackTrace();
+		}
+
+		IDevice [] devices = DeviceBridge.getDevices();
+
+		IDevice device = null;
+
+		for( IDevice iDevice : devices )
+		{
+			if ( deviceName.equals( iDevice.getSerialNumber() ) )
+			{
+				device = iDevice;
+				break;
+			}
+		}
+
+		if ( device == null )
+		{
+			return null;
+		}
+
+		ViewServerDevice viewServerDevice = new ViewServerDevice( device );
+		viewServerDevice.initializeViewDebug();
+
+		Window [] windows = viewServerDevice.getWindows();
+		if ( windows == null )
+		{
+			return null;
+		}
+		for( Window window : windows )
+		{
+			if ( window.getHashCode() == viewServerDevice.getFocusedWindow() )
+			{
+				currentWindow = window;
+				break;
+			}
+		}
+		return currentWindow;
+	}
+
 	public ViewNode findViewById( ViewNode entryViewNode , String id )
 	{
 		ViewNode existViewNode = null;
@@ -241,7 +381,45 @@ public class AccuratelyAnalyze
 
 		return existViewNode;
 	}
-	
+
+	public int [] getSize( ViewNode viewNode )
+	{
+		int [] size = null;
+
+		if ( viewNode.namedProperties != null )
+		{
+			Map<String,Property> propertyMap = viewNode.namedProperties;
+			boolean existScreenX = propertyMap.containsKey( "layout:getLocationOnScreen_x()" );
+			boolean existScreenY = propertyMap.containsKey( "layout:getLocationOnScreen_y()" );
+			boolean existX = propertyMap.containsKey( "drawing:getX()" );
+			boolean existY = propertyMap.containsKey( "drawing:getY()" );
+			boolean existWidth = propertyMap.containsKey( "measurement:mMeasuredWidth" );
+			boolean existHeight = propertyMap.containsKey( "measurement:mMeasuredHeight" );
+
+			if ( ( existScreenX || existX ) && ( existScreenY || existY ) && existWidth && existHeight )
+			{
+				size = new int [ 4 ];
+				try
+				{
+					String x = existScreenX ? propertyMap.get( "layout:getLocationOnScreen_x()" ).value : propertyMap.get( "drawing:getX()" ).value;
+					String y = existScreenY ? propertyMap.get( "layout:getLocationOnScreen_y()" ).value : propertyMap.get( "drawing:getY()" ).value;
+					String width = propertyMap.get( "measurement:mMeasuredWidth" ).value;
+					String height = propertyMap.get( "measurement:mMeasuredHeight" ).value;
+					size[ 0 ] = ( int ) Float.parseFloat( x );
+					size[ 1 ] = ( int ) Float.parseFloat( y );
+					size[ 2 ] = ( int ) Float.parseFloat( width );
+					size[ 3 ] = ( int ) Float.parseFloat( height );
+				}
+				catch ( Exception e )
+				{
+					e.printStackTrace();
+					size = null;
+				}
+			}
+		}
+		return size;
+	}
+
 	public void printInfo( ViewNode viewNode )
 	{
 		if ( viewNode != null )
@@ -266,7 +444,7 @@ public class AccuratelyAnalyze
 			p( "not exist" );
 		}
 	}
-	
+
 	void p( String info )
 	{
 		System.out.println( info );
