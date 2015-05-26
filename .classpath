@@ -6,5 +6,49 @@
 	<classpathentry excluding="**" kind="src" output="target/test-classes" path="src/test/resources"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.6"/>
 	<classpathentry kind="con" path="org.eclipse.m2e.MAVEN2_CLASSPATH_CONTAINER"/>
+	<classpathentry kind="lib" path="lib/android/annotations.jar"/>
+	<classpathentry kind="lib" path="lib/android/ant-tasks.jar"/>
+	<classpathentry kind="lib" path="lib/android/archquery.jar"/>
+	<classpathentry kind="lib" path="lib/android/asm-5.0.3.jar"/>
+	<classpathentry kind="lib" path="lib/android/asm-analysis-5.0.3.jar"/>
+	<classpathentry kind="lib" path="lib/android/asm-tree-5.0.3.jar"/>
+	<classpathentry kind="lib" path="lib/android/asset-studio.jar"/>
+	<classpathentry kind="lib" path="lib/android/builder-model.jar"/>
+	<classpathentry kind="lib" path="lib/android/common.jar"/>
+	<classpathentry kind="lib" path="lib/android/commons-codec-1.4.jar"/>
+	<classpathentry kind="lib" path="lib/android/commons-compress-1.8.1.jar"/>
+	<classpathentry kind="lib" path="lib/android/commons-logging-1.1.1.jar"/>
+	<classpathentry kind="lib" path="lib/android/ddmlib.jar"/>
+	<classpathentry kind="lib" path="lib/android/ddms.jar"/>
+	<classpathentry kind="lib" path="lib/android/ddmuilib.jar"/>
+	<classpathentry kind="lib" path="lib/android/dvlib.jar"/>
+	<classpathentry kind="lib" path="lib/android/emma_ant.jar"/>
+	<classpathentry kind="lib" path="lib/android/emma_device.jar"/>
+	<classpathentry kind="lib" path="lib/android/emma.jar"/>
+	<classpathentry kind="lib" path="lib/android/fat32lib.jar"/>
+	<classpathentry kind="lib" path="lib/android/guava-17.0.jar"/>
+	<classpathentry kind="lib" path="lib/android/hierarchyviewer2.jar"/>
+	<classpathentry kind="lib" path="lib/android/hierarchyviewer2lib.jar"/>
+	<classpathentry kind="lib" path="lib/android/jcommon-1.0.12.jar"/>
+	<classpathentry kind="lib" path="lib/android/jobb.jar"/>
+	<classpathentry kind="lib" path="lib/android/jsilver-1.0.0.jar"/>
+	<classpathentry kind="lib" path="lib/android/kxml2-2.3.0.jar"/>
+	<classpathentry kind="lib" path="lib/android/layoutlib-api.jar"/>
+	<classpathentry kind="lib" path="lib/android/lint-api.jar"/>
+	<classpathentry kind="lib" path="lib/android/lint-checks.jar"/>
+	<classpathentry kind="lib" path="lib/android/lint.jar"/>
+	<classpathentry kind="lib" path="lib/android/lombok-ast-0.2.3.jar"/>
+	<classpathentry kind="lib" path="lib/android/manifest-merger.jar"/>
+	<classpathentry kind="lib" path="lib/android/rule-api.jar"/>
+	<classpathentry kind="lib" path="lib/android/screenshot2.jar"/>
+	<classpathentry kind="lib" path="lib/android/sdk-common.jar"/>
+	<classpathentry kind="lib" path="lib/android/sdklib.jar"/>
+	<classpathentry kind="lib" path="lib/android/sdkmanager.jar"/>
+	<classpathentry kind="lib" path="lib/android/sdkstats.jar"/>
+	<classpathentry kind="lib" path="lib/android/sdkuilib.jar"/>
+	<classpathentry kind="lib" path="lib/android/swt.jar"/>
+	<classpathentry kind="lib" path="lib/android/swtmenubar.jar"/>
+	<classpathentry kind="lib" path="lib/android/traceview.jar"/>
+	<classpathentry kind="lib" path="lib/android/uiautomatorviewer.jar"/>
 	<classpathentry kind="output" path="target/classes"/>
 </classpath>
