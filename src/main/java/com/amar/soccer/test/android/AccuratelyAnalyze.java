@@ -1,47 +1,39 @@
 package com.amar.soccer.test.android;
 
 import java.util.List;
-import java.util.Map;
 
-import com.amar.soccer.util.MathUtil;
 import com.android.ddmlib.IDevice;
 import com.android.hierarchyviewerlib.device.DeviceBridge;
 import com.android.hierarchyviewerlib.device.ViewServerDevice;
 import com.android.hierarchyviewerlib.models.ViewNode;
-import com.android.hierarchyviewerlib.models.ViewNode.Property;
 import com.android.hierarchyviewerlib.models.Window;
 
 public class AccuratelyAnalyze
 {
 	public static void main( String [] args )
 	{
-		// AccuratelyAnalyze accuratelyAnalyze = new AccuratelyAnalyze( "E:/android/sdk/platform-tools/adb.exe" , "192.168.112.101:5555" , 1000 );
-		AccuratelyAnalyze accuratelyAnalyze = new AccuratelyAnalyze( "D:/data/Android/sdk/platform-tools/adb.exe" , "192.168.56.101:5555" , 1000 );
+		AccuratelyAnalyze accuratelyAnalyze = new AccuratelyAnalyze( "E:/android/sdk/platform-tools/adb.exe" , "192.168.112.101:5555" , 1000 );
+		// AccuratelyAnalyze accuratelyAnalyze = new AccuratelyAnalyze( "D:/data/Android/sdk/platform-tools/adb.exe" , "192.168.56.101:5555" , 1000 );
 
 		ViewNode rootViewNode = accuratelyAnalyze.getRootViewNode();
-		ViewNode focusViewNode = accuratelyAnalyze.focusViewIsClick( 420 , 390 , rootViewNode );
+		ViewNode topFocusViewNode = accuratelyAnalyze.findFocusedViewWhoIsTop( rootViewNode );
+		ViewNodeInfo viewNodeInfo = new ViewNodeInfo( topFocusViewNode );
+		viewNodeInfo.setActionHeight( accuratelyAnalyze.getActionBarHeight() );
 
-		if ( focusViewNode != null )
+		System.out.println( viewNodeInfo );
+		if ( viewNodeInfo.inThisArea( 476 , 959 ) )
 		{
-			System.out.println( focusViewNode.id + ":" + focusViewNode.namedProperties.get( "text:mText" ).value );
+			System.out.println( topFocusViewNode.id + "," + topFocusViewNode.name );
 		}
 		else
 		{
 			System.out.println( "not in" );
 		}
 
-		focusViewNode = accuratelyAnalyze.focusViewIsClick( 120 , 390 , rootViewNode );
-		if ( focusViewNode != null )
-		{
-			System.out.println( focusViewNode.id );
-		}
-		else
-		{
-			System.out.println( "not in" );
-		}
+		// ViewNode findView = accuratelyAnalyze.findViewById( accuratelyAnalyze.getRootViewNode() , "id/edt_login_password" );
+		// System.out.println( "find:" + findView.id );
 
-		//accuratelyAnalyze.destory();
-		System.out.println( accuratelyAnalyze.getCurrentActivity() );
+		accuratelyAnalyze.destory();
 	}
 
 	String adbPath;
@@ -55,138 +47,6 @@ public class AccuratelyAnalyze
 		this.adbPath = adbPath;
 		this.deviceName = deviceName;
 		this.connectTime = connectTime;
-	}
-
-	public ViewNode focusViewIsClick( int x , int y , ViewNode rootViewNode )
-	{
-		ViewNode focusViewNode = null;
-		if ( rootViewNode != null )
-		{
-			ViewNode topFocusViewNode = findFocusedViewWhoIsTop( rootViewNode );
-			if ( topFocusViewNode != null )
-			{
-				System.out.println( topFocusViewNode.id );
-				int size[] = getSize( topFocusViewNode );
-				if ( size != null )
-				{
-					boolean viewInThisArea = MathUtil.inThisArea( x , y - actionBarHeight , size[ 0 ] , size[ 1 ] , size[ 2 ] , size[ 3 ] );
-					if ( viewInThisArea )
-					{
-						focusViewNode = topFocusViewNode;
-					}
-				}
-			}
-		}
-
-		return focusViewNode;
-	}
-
-	public void demo1() throws Exception
-	{
-		p( "start" );
-		IDevice [] devices = null;
-
-		while ( null == devices || 0 == devices.length )
-		{
-			DeviceBridge.initDebugBridge( "E:/android/sdk/platform-tools/adb.exe" );
-			// it must wait for some time, otherwise will throw exception
-			try
-			{
-				Thread.sleep( 1000 );
-			}
-			catch ( InterruptedException e )
-			{
-				e.printStackTrace();
-			}
-			devices = DeviceBridge.getDevices();
-			break;
-		}
-
-		for( IDevice device : devices )
-		{
-			p( device.getSerialNumber() + " isOnline:" + device.isOnline() );
-
-			ViewServerDevice viewServerDevice = new ViewServerDevice( device );
-			viewServerDevice.initializeViewDebug();
-
-			Window [] windows = viewServerDevice.getWindows();
-			if ( windows == null )
-			{
-				return;
-			}
-			Window focusedWindow = null;
-			for( Window window : windows )
-			{
-				if ( window.getHashCode() == viewServerDevice.getFocusedWindow() )
-				{
-					focusedWindow = window;
-					p( viewServerDevice.getFocusedWindow() + ":" + window.getTitle() );
-					break;
-				}
-			}
-
-			if ( focusedWindow == null )
-				return;
-
-			ViewNode entryViewNode = viewServerDevice.loadWindowData( focusedWindow );
-			ViewNode viewNode = findViewById( entryViewNode , "id/help_item_01" );
-
-			printInfo( viewNode );
-		}
-		DeviceBridge.terminate();
-	}
-
-	public void demo2() throws Exception
-	{
-		p( "start" );
-		IDevice [] devices = null;
-		while ( null == devices || 0 == devices.length )
-		{
-			DeviceBridge.initDebugBridge( "E:/android/sdk/platform-tools/adb.exe" );
-
-			try
-			{
-				Thread.sleep( 1000 ); // it must wait for some time, otherwise will throw exception
-			}
-			catch ( InterruptedException e )
-			{
-				e.printStackTrace();
-			}
-			devices = DeviceBridge.getDevices();
-			break;
-		}
-
-		for( IDevice device : devices )
-		{
-			p( device.getSerialNumber() + " isOnline:" + device.isOnline() );
-
-			ViewServerDevice viewServerDevice = new ViewServerDevice( device );
-			viewServerDevice.initializeViewDebug();
-
-			Window [] windows = viewServerDevice.getWindows();
-			if ( windows == null )
-			{
-				return;
-			}
-			Window focusedWindow = null;
-			for( Window window : windows )
-			{
-				if ( window.getHashCode() == viewServerDevice.getFocusedWindow() )
-				{
-					focusedWindow = window;
-					p( viewServerDevice.getFocusedWindow() + ":" + window.getTitle() );
-					break;
-				}
-			}
-
-			if ( focusedWindow == null )
-				return;
-
-			ViewNode entryViewNode = viewServerDevice.loadWindowData( focusedWindow );
-			ViewNode viewNode = findFocusedViewWhoIsTop( entryViewNode );
-			printInfo( viewNode );
-		}
-		DeviceBridge.terminate();
 	}
 
 	public String getCurrentActivity()
@@ -208,7 +68,7 @@ public class AccuratelyAnalyze
 		DeviceBridge.terminate();
 	}
 
-	int actionBarHeight = 0;
+	public int actionBarHeight = 0;
 
 	private void detectActionBarHeight( ViewNode rootViewNode )
 	{
@@ -382,71 +242,18 @@ public class AccuratelyAnalyze
 		return existViewNode;
 	}
 
-	public int [] getSize( ViewNode viewNode )
-	{
-		int [] size = null;
-
-		if ( viewNode.namedProperties != null )
-		{
-			Map<String,Property> propertyMap = viewNode.namedProperties;
-			boolean existScreenX = propertyMap.containsKey( "layout:getLocationOnScreen_x()" );
-			boolean existScreenY = propertyMap.containsKey( "layout:getLocationOnScreen_y()" );
-			boolean existX = propertyMap.containsKey( "drawing:getX()" );
-			boolean existY = propertyMap.containsKey( "drawing:getY()" );
-			boolean existWidth = propertyMap.containsKey( "measurement:mMeasuredWidth" );
-			boolean existHeight = propertyMap.containsKey( "measurement:mMeasuredHeight" );
-
-			if ( ( existScreenX || existX ) && ( existScreenY || existY ) && existWidth && existHeight )
-			{
-				size = new int [ 4 ];
-				try
-				{
-					String x = existScreenX ? propertyMap.get( "layout:getLocationOnScreen_x()" ).value : propertyMap.get( "drawing:getX()" ).value;
-					String y = existScreenY ? propertyMap.get( "layout:getLocationOnScreen_y()" ).value : propertyMap.get( "drawing:getY()" ).value;
-					String width = propertyMap.get( "measurement:mMeasuredWidth" ).value;
-					String height = propertyMap.get( "measurement:mMeasuredHeight" ).value;
-					size[ 0 ] = ( int ) Float.parseFloat( x );
-					size[ 1 ] = ( int ) Float.parseFloat( y );
-					size[ 2 ] = ( int ) Float.parseFloat( width );
-					size[ 3 ] = ( int ) Float.parseFloat( height );
-				}
-				catch ( Exception e )
-				{
-					e.printStackTrace();
-					size = null;
-				}
-			}
-		}
-		return size;
-	}
-
-	public void printInfo( ViewNode viewNode )
-	{
-		if ( viewNode != null )
-		{
-			if ( viewNode.namedProperties != null )
-			{
-				String x = viewNode.namedProperties.get( "layout:getLocationOnScreen_x()" ).value;
-				String y = viewNode.namedProperties.get( "layout:getLocationOnScreen_y()" ).value;
-				String width = viewNode.namedProperties.get( "measurement:mMeasuredWidth" ).value;
-				String height = viewNode.namedProperties.get( "measurement:mMeasuredHeight" ).value;
-				String text = viewNode.namedProperties.get( "text:mText" ) == null ? "" : viewNode.namedProperties.get( "text:mText" ).value;
-				p( "info ==> hasFocus:" + viewNode.hasFocus + " ,id:" + viewNode.id + " ,type:" + viewNode.name + " ,x:" + x + " ,y:" + y + " ,width:" + width + " ,height:" + height + " ,text:"
-						+ text );
-			}
-			else
-			{
-				p( "no text" );
-			}
-		}
-		else
-		{
-			p( "not exist" );
-		}
-	}
-
 	void p( String info )
 	{
 		System.out.println( info );
+	}
+
+	public int getActionBarHeight()
+	{
+		return actionBarHeight;
+	}
+
+	public void setActionBarHeight( int actionBarHeight )
+	{
+		this.actionBarHeight = actionBarHeight;
 	}
 }
