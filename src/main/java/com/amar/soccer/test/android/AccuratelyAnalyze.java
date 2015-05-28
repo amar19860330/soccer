@@ -1,5 +1,7 @@
 package com.amar.soccer.test.android;
 
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.util.List;
 
 import com.android.ddmlib.IDevice;
@@ -7,6 +9,7 @@ import com.android.hierarchyviewerlib.device.DeviceBridge;
 import com.android.hierarchyviewerlib.device.ViewServerDevice;
 import com.android.hierarchyviewerlib.models.ViewNode;
 import com.android.hierarchyviewerlib.models.Window;
+import com.android.hierarchyviewerlib.ui.util.PsdFile;
 
 public class AccuratelyAnalyze
 {
@@ -15,24 +18,31 @@ public class AccuratelyAnalyze
 		AccuratelyAnalyze accuratelyAnalyze = new AccuratelyAnalyze( "E:/android/sdk/platform-tools/adb.exe" , "192.168.112.101:5555" , 1000 );
 		// AccuratelyAnalyze accuratelyAnalyze = new AccuratelyAnalyze( "D:/data/Android/sdk/platform-tools/adb.exe" , "192.168.56.101:5555" , 1000 );
 
-		ViewNode rootViewNode = accuratelyAnalyze.getRootViewNode();
-		ViewNode topFocusViewNode = accuratelyAnalyze.findFocusedViewWhoIsTop( rootViewNode );
-		ViewNodeInfo viewNodeInfo = new ViewNodeInfo( topFocusViewNode );
-		viewNodeInfo.setActionHeight( accuratelyAnalyze.getActionBarHeight() );
+		// test findFocusedViewWhoIsTop
+		// ViewNode rootViewNode = accuratelyAnalyze.getRootViewNode();
+		// ViewNode topFocusViewNode = accuratelyAnalyze.findFocusedViewWhoIsTop( rootViewNode );
+		// ViewNodeInfo viewNodeInfo = new ViewNodeInfo( topFocusViewNode );
+		// viewNodeInfo.setActionHeight( accuratelyAnalyze.getActionBarHeight() );
+		//
+		// System.out.println( viewNodeInfo );
 
-		System.out.println( viewNodeInfo );
-		if ( viewNodeInfo.inThisArea( 476 , 959 ) )
-		{
-			System.out.println( topFocusViewNode.id + "," + topFocusViewNode.name );
-		}
-		else
-		{
-			System.out.println( "not in" );
-		}
-
+		// test findViewById
 		// ViewNode findView = accuratelyAnalyze.findViewById( accuratelyAnalyze.getRootViewNode() , "id/edt_login_password" );
-		// System.out.println( "find:" + findView.id );
+		// ViewNodeInfo viewNodeInfo = new ViewNodeInfo( findView );
+		// System.out.println( viewNodeInfo );
 
+		Window window = accuratelyAnalyze.getWindow();
+		PsdFile psdFile = window.getHvDevice().captureLayers( window );
+		if ( psdFile != null )
+		{
+			try
+			{
+				psdFile.write( new FileOutputStream( "e:/test/2.psd" ) );
+			}
+			catch ( FileNotFoundException e )
+			{
+			}
+		}
 		accuratelyAnalyze.destory();
 	}
 

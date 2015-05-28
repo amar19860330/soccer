@@ -11,7 +11,7 @@ public class ViewNodeInfo
 
 	public enum Type
 	{
-		Text, Button, DropDownList, TextArea
+		TextView, Button, Spinner, EditText, ImageView
 	}
 
 	public static final String DATA_TEXT = "text:mText";
@@ -28,7 +28,17 @@ public class ViewNodeInfo
 
 	public static final String DATA_HEIGHT_MEASURED = "measurement:mMeasuredHeight";
 
-	public static final String TYPE_STRING_EditText = "android.widget.EditText";
+	public static final String DATA_SPINNER_ITEM_COUNT = "list:mItemCount";
+
+	public static final String TYPE_STRING_EDITTEXT = "android.widget.EditText";
+
+	public static final String TYPE_STRING_BUTTON = "android.widget.Button";
+
+	public static final String TYPE_STRING_TEXTVIEW = "android.widget.TextView";
+
+	public static final String TYPE_STRING_SPIN = "android.widget.ListPopupWindow$DropDownListView";
+
+	public static final String TYPE_STRING_IMAGEVIEW = "android.widget.ImageView";
 
 	private int x;
 
@@ -52,10 +62,64 @@ public class ViewNodeInfo
 
 	private ViewNode viewNode;
 
-	public static Type analyzeType( String typeString )
+	// @SuppressWarnings( "rawtypes" )
+	public Type analyzeType( String typeString )
 	{
-		// todo
-		return null;
+		Type type = null;
+		if ( TYPE_STRING_EDITTEXT.equals( typeString ) )
+		{
+			type = Type.EditText;
+		}
+		else if ( TYPE_STRING_BUTTON.equals( typeString ) )
+		{
+			type = Type.Button;
+		}
+		else if ( TYPE_STRING_TEXTVIEW.equals( typeString ) )
+		{
+			type = Type.TextView;
+		}
+		else if ( TYPE_STRING_SPIN.equals( typeString ) )
+		{
+			type = Type.Spinner;
+		}
+		else if ( TYPE_STRING_IMAGEVIEW.equals( typeString ) )
+		{
+			type = Type.ImageView;
+		}
+		else
+		{
+
+			// try
+			// {
+			// Class editClass = Class.forName( TYPE_STRING_EDITTEXT );
+			// Class analyzeClass = Class.forName( typeString );
+			// Class compareClass = analyzeClass;
+			// boolean isThisType = false;
+			// while ( true )
+			// {
+			// if ( compareClass == null )
+			// {
+			// break;
+			// }
+			//
+			// if ( compareClass.getName().equals( editClass.getName() ) )
+			// {
+			// isThisType = true;
+			// break;
+			// }
+			//
+			// compareClass = compareClass.getSuperclass();
+			// }
+			//
+			// System.out.println( typeString + " is :" + TYPE_STRING_EDITTEXT + ":" + isThisType );
+			// }
+			// catch ( ClassNotFoundException e )
+			// {
+			// e.printStackTrace();
+			// }
+		}
+
+		return type;
 	}
 
 	public ViewNodeInfo( ViewNode viewNode )
@@ -79,9 +143,30 @@ public class ViewNodeInfo
 	private void setOtherInfo( ViewNode viewNode )
 	{
 		this.id = viewNode.id;
-		if ( viewNode.namedProperties != null )
+		if ( viewNode.namedProperties != null && type != null )
 		{
+			Map<String,Property> propertyMap = viewNode.namedProperties;
+			switch ( type )
+			{
+			case Button:
+				this.text = propertyMap.get( DATA_TEXT ).value;
+				break;
+			case TextView:
+				this.text = propertyMap.get( DATA_TEXT ).value;
+				break;
+			case EditText:
+				this.text = propertyMap.get( DATA_TEXT ).value;
+				break;
+			case ImageView:
+				break;
+			case Spinner:
+				if ( propertyMap.containsKey( DATA_SPINNER_ITEM_COUNT ) )
+				{
+					this.size = Integer.parseInt( propertyMap.get( DATA_SPINNER_ITEM_COUNT ).value );
+				}
 
+				break;
+			}
 		}
 	}
 
