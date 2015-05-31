@@ -14,12 +14,14 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 
+import com.android.ddmlib.AndroidDebugBridge;
 import com.android.ddmlib.IDevice;
 import com.android.hierarchyviewerlib.device.DeviceBridge;
 import com.android.hierarchyviewerlib.device.ViewServerDevice;
 import com.android.hierarchyviewerlib.models.ViewNode;
 import com.android.hierarchyviewerlib.models.Window;
 import com.android.hierarchyviewerlib.ui.util.PsdFile;
+import com.android.uiautomator.DebugBridge;
 import com.android.uiautomator.UiAutomatorHelper;
 import com.android.uiautomator.UiAutomatorHelper.UiAutomatorException;
 import com.android.uiautomator.UiAutomatorHelper.UiAutomatorResult;
@@ -61,18 +63,35 @@ public class AccuratelyAnalyze
 
 		try
 		{
-			UiAutomatorViewer uiAutomatorViewer = new UiAutomatorViewer();
-			uiAutomatorViewer.setBlockOnOpen( false );
-			uiAutomatorViewer.open();
-			IDevice device = accuratelyAnalyze.getWindow().getDevice();
+			System.setProperty( "com.android.uiautomator.bindir" , "E:/android/sdk/tools" );
+			DebugBridge.init();
+			try
+			{
+				Thread.sleep( 1000 );
+			}
+			catch ( InterruptedException e )
+			{
+				e.printStackTrace();
+			}
 			
-			Thread.sleep( 3000 );
-			accuratelyAnalyze.openUI( uiAutomatorViewer , device );
-			
+			 UiAutomatorViewer uiAutomatorViewer = new UiAutomatorViewer();
+			 uiAutomatorViewer.setBlockOnOpen( true );
+			 uiAutomatorViewer.open();
+//			 
+//			List<IDevice> deviceList = DebugBridge.getDevices();
+//			if ( deviceList != null )
+//				for( IDevice iDevice : deviceList )
+//				{
+//					System.out.println( iDevice.getSerialNumber() );
+//					accuratelyAnalyze.openUI( uiAutomatorViewer , iDevice );
+//					break;
+//				}
+
 		}
 		catch ( Exception e )
 		{
 			e.printStackTrace();
+			accuratelyAnalyze.destory();
 		}
 	}
 
@@ -81,26 +100,26 @@ public class AccuratelyAnalyze
 		try
 		{
 			ProgressMonitorDialog dialog = new ProgressMonitorDialog( uiAutomatorViewer.getShell() );
-			dialog.run( true , false , new IRunnableWithProgress()
-			{
-				public void run( IProgressMonitor monitor ) throws InvocationTargetException , InterruptedException
-				{
-					UiAutomatorHelper.UiAutomatorResult result = null;
-					try
-					{
-						result = UiAutomatorHelper.takeSnapshot( device , monitor );
-					}
-					catch ( UiAutomatorHelper.UiAutomatorException e )
-					{
-						monitor.done();
-						e.printStackTrace();
-						return;
-					}
-
-					uiAutomatorViewer.setModel( result.model , result.uiHierarchy , result.screenshot );
-					monitor.done();
-				}
-			} );
+			
+			dialog.run(true, false, new IRunnableWithProgress()
+		      {
+		        public void run(IProgressMonitor monitor)
+		          throws InvocationTargetException, InterruptedException
+		        {
+		          UiAutomatorHelper.UiAutomatorResult result = null;
+		          try
+		          {
+		            result = UiAutomatorHelper.takeSnapshot(device, monitor, false);
+		          }
+		          catch (UiAutomatorHelper.UiAutomatorException e)
+		          {
+		            monitor.done();
+		            return;
+		          }
+		          uiAutomatorViewer.setModel(result.model, result.uiHierarchy, result.screenshot);
+		          monitor.done();
+		        }
+		      });
 		}
 		catch ( Exception e )
 		{
