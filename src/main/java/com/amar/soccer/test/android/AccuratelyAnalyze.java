@@ -1,8 +1,18 @@
 package com.amar.soccer.test.android;
 
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.lang.reflect.InvocationTargetException;
 import java.util.List;
+
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.jface.dialogs.ProgressMonitorDialog;
+import org.eclipse.jface.operation.IRunnableWithProgress;
+import org.eclipse.jface.window.Window.IExceptionHandler;
+import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Shell;
 
 import com.android.ddmlib.IDevice;
 import com.android.hierarchyviewerlib.device.DeviceBridge;
@@ -10,6 +20,11 @@ import com.android.hierarchyviewerlib.device.ViewServerDevice;
 import com.android.hierarchyviewerlib.models.ViewNode;
 import com.android.hierarchyviewerlib.models.Window;
 import com.android.hierarchyviewerlib.ui.util.PsdFile;
+import com.android.uiautomator.UiAutomatorHelper;
+import com.android.uiautomator.UiAutomatorHelper.UiAutomatorException;
+import com.android.uiautomator.UiAutomatorHelper.UiAutomatorResult;
+import com.android.uiautomator.UiAutomatorModel;
+import com.android.uiautomator.UiAutomatorViewer;
 
 public class AccuratelyAnalyze
 {
@@ -31,19 +46,66 @@ public class AccuratelyAnalyze
 		// ViewNodeInfo viewNodeInfo = new ViewNodeInfo( findView );
 		// System.out.println( viewNodeInfo );
 
-		Window window = accuratelyAnalyze.getWindow();
-		PsdFile psdFile = window.getHvDevice().captureLayers( window );
-		if ( psdFile != null )
+		// Window window = accuratelyAnalyze.getWindow();
+		// PsdFile psdFile = window.getHvDevice().captureLayers( window );
+		// if ( psdFile != null )
+		// {
+		// try
+		// {
+		// psdFile.write( new FileOutputStream( "e:/test/2.psd" ) );
+		// }
+		// catch ( FileNotFoundException e )
+		// {
+		// }
+		// }
+
+		try
 		{
-			try
-			{
-				psdFile.write( new FileOutputStream( "e:/test/2.psd" ) );
-			}
-			catch ( FileNotFoundException e )
-			{
-			}
+			UiAutomatorViewer uiAutomatorViewer = new UiAutomatorViewer();
+			uiAutomatorViewer.setBlockOnOpen( false );
+			uiAutomatorViewer.open();
+			IDevice device = accuratelyAnalyze.getWindow().getDevice();
+			
+			Thread.sleep( 3000 );
+			accuratelyAnalyze.openUI( uiAutomatorViewer , device );
+			
 		}
-		accuratelyAnalyze.destory();
+		catch ( Exception e )
+		{
+			e.printStackTrace();
+		}
+	}
+
+	public void openUI( final UiAutomatorViewer uiAutomatorViewer , final IDevice device )
+	{
+		try
+		{
+			ProgressMonitorDialog dialog = new ProgressMonitorDialog( uiAutomatorViewer.getShell() );
+			dialog.run( true , false , new IRunnableWithProgress()
+			{
+				public void run( IProgressMonitor monitor ) throws InvocationTargetException , InterruptedException
+				{
+					UiAutomatorHelper.UiAutomatorResult result = null;
+					try
+					{
+						result = UiAutomatorHelper.takeSnapshot( device , monitor );
+					}
+					catch ( UiAutomatorHelper.UiAutomatorException e )
+					{
+						monitor.done();
+						e.printStackTrace();
+						return;
+					}
+
+					uiAutomatorViewer.setModel( result.model , result.uiHierarchy , result.screenshot );
+					monitor.done();
+				}
+			} );
+		}
+		catch ( Exception e )
+		{
+			e.printStackTrace();
+		}
 	}
 
 	String adbPath;
